@@ -1,0 +1,27 @@
+---
+name: critter
+lead: Robin Southern at github.com/betajaen
+comments:
+    type: bread
+    path: ../documentation/
+version: source/CritterVersion.h
+source:
+    headers:
+        - ../source
+        - %NXOGRE_DIR%/SDK if windows
+        - %OGRE_HOME%/include if windows
+        - %OGRE_HOME%/include/OGRE if windows
+        - %OGRE_HOME%/boost_1_42 if windows
+    code:
+        - source
+    libraries: []
+preprocessor:
+    - CRITTER_SDK
+    - CRITTER_OPTIONS_STATIC_LIBRARY
+products:
+    - name: Final
+      type: static library      
+    - name: Debug
+      type: static library
+      preprocessor:
+        - CRITTER_DEBUG
