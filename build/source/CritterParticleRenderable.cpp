@@ -1,20 +1,19 @@
-/** File: OGRE3DRenderable.cpp
-    Created on: 18-May-09
-    Author: Robin Southern "betajaen"
+/** 
     
-
-    Copyright (c) 2008-2009 Robin Southern
-
+    This file is part of Critter.
+    
+    Copyright (c) 2009 Robin Southern, http://www.nxogre.org
+    
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
     in the Software without restriction, including without limitation the rights
     to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
     copies of the Software, and to permit persons to whom the Software is
     furnished to do so, subject to the following conditions:
-
+    
     The above copyright notice and this permission notice shall be included in
     all copies or substantial portions of the Software.
-
+    
     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
     IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
     FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -22,26 +21,28 @@
     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
     THE SOFTWARE.
-
+    
 */
-
-                                                                                       
 
 #include "CritterParticleRenderable.h"
 #include "CritterRenderSystem.h"
-#include "Ogre.h"
 
                                                                                        
 
-OGRE3DParticleRenderable::OGRE3DParticleRenderable(const Ogre::String& material, OGRE3DRenderSystem* renderSystem)
-: NxOgre::Renderable(OGRE3DFluidType_OgreParticle),
+namespace Critter
+{
+
+                                                                                       
+
+ParticleRenderable::ParticleRenderable(const Ogre::String& material, RenderSystem* renderSystem)
+: NxOgre::Renderable(Enums::FluidType_OgreParticle),
   mMaterialName(material),
   mRenderSystem(renderSystem),
   mParticleSystem(0)
 {
 }
 
-OGRE3DParticleRenderable::~OGRE3DParticleRenderable(void)
+ParticleRenderable::~ParticleRenderable(void)
 {
  
  if (mParticleSystem)
@@ -52,16 +53,17 @@ OGRE3DParticleRenderable::~OGRE3DParticleRenderable(void)
   mRenderSystem->getSceneManager()->destroyParticleSystem(mParticleSystem);
   mParticleSystem = 0;
  }
+ 
 }
 
-void OGRE3DParticleRenderable::initialise(NxOgre::Fluid* fluid)
+void ParticleRenderable::initialise(NxOgre::Fluid* fluid)
 {
  
  mFluid = fluid;
  
  mNode = mRenderSystem->getSceneManager()->getRootSceneNode()->createChildSceneNode();
  mParticleSystem = mRenderSystem->getSceneManager()->createParticleSystem(
-   mRenderSystem->getUniqueName("OGRE3DParticleRenderable"),
+   mRenderSystem->getUniqueName("ParticleRenderable"),
    mFluid->getMaxParticles() * 2);
  mNode->attachObject(mParticleSystem);
  
@@ -72,7 +74,7 @@ void OGRE3DParticleRenderable::initialise(NxOgre::Fluid* fluid)
  
 }
 
-void OGRE3DParticleRenderable::drawFluid(NxOgre::PhysXParticleData* data, const NxOgre::Bounds3& bounds)
+void ParticleRenderable::drawFluid(NxOgre::PhysXParticleData* data, const NxOgre::Bounds3& bounds)
 {
  
  if (data->getNbParticles() > mParticleSystem->getNumParticles())
@@ -121,22 +123,25 @@ void OGRE3DParticleRenderable::drawFluid(NxOgre::PhysXParticleData* data, const 
  
 }
 
-Ogre::SceneNode* OGRE3DParticleRenderable::getNode()
+Ogre::SceneNode* ParticleRenderable::getNode()
 {
  return mNode;
 }
 
-OGRE3DRenderSystem* OGRE3DParticleRenderable::getRenderSystem()
+RenderSystem* ParticleRenderable::getRenderSystem()
 {
  return mRenderSystem;
 }
 
 
-Ogre::ParticleSystem* OGRE3DParticleRenderable::getParticleSystem()
+Ogre::ParticleSystem* ParticleRenderable::getParticleSystem()
 {
  return mParticleSystem;
 }
 
 
+                                                                                       
+
+} // namespace
 
                                                                                        

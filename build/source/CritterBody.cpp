@@ -1,20 +1,19 @@
-/** File: OGRE3DBody.cpp
-    Created on: 10-Nov-08
-    Author: Robin Southern "betajaen"
+/** 
     
-
-    Copyright (c) 2008-2009 Robin Southern
-
+    This file is part of Critter.
+    
+    Copyright (c) 2009 Robin Southern, http://www.nxogre.org
+    
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
     in the Software without restriction, including without limitation the rights
     to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
     copies of the Software, and to permit persons to whom the Software is
     furnished to do so, subject to the following conditions:
-
+    
     The above copyright notice and this permission notice shall be included in
     all copies or substantial portions of the Software.
-
+    
     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
     IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
     FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -22,23 +21,21 @@
     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
     THE SOFTWARE.
-
+    
 */
 
-                                                                                       
-
 #include "CritterBody.h"
-#include "CritterRigidBodyDescription.h"
 #include "CritterRenderSystem.h"
-#include "Ogre.h"
-#include "NxOgreFunctions.h"
-#include "NxOgreTimeController.h"
-
-#include <iostream>
+#include "CritterBodyDescription.h"
 
                                                                                        
 
-OGRE3DBody::OGRE3DBody(const NxOgre::ShapeDescription& shape, const NxOgre::Matrix44& pose, OGRE3DRigidBodyDescription& description, OGRE3DRenderSystem* rendersystem)
+namespace Critter
+{
+
+                                                                                       
+
+Body::Body(const NxOgre::ShapeDescription& shape, const NxOgre::Matrix44& pose, BodyDescription& description, RenderSystem* rendersystem)
 : Actor(rendersystem->getScene()), // Take notice of the constructor we are using, it's designed for
                                    // classes that inherit from Actor. 
  mSceneNodeDestructorBehaviour(description.mSceneNodeDestructorBehaviour),
@@ -46,11 +43,8 @@ OGRE3DBody::OGRE3DBody(const NxOgre::ShapeDescription& shape, const NxOgre::Matr
  mRenderSystem(rendersystem)
 {
  
- mName = description.mName;
- mNameHash = NxOgre::hash(mName);
- 
  // Create a dynamic RigidBody with the pose, scene and shape.
- // We can pass on the OGRE3DRigidBodyDescription as a RigidBodyDescription because it inherits from it,
+ // We can pass on the BodyDescription as a RigidBodyDescription because it inherits from it,
  createDynamic(pose, description, rendersystem->getScene(), shape);
 
  // Obviously NxOgre won't know about the Ogre bits, so this is what the next lines are for:
@@ -61,7 +55,7 @@ OGRE3DBody::OGRE3DBody(const NxOgre::ShapeDescription& shape, const NxOgre::Matr
  NxOgre::TimeController::getSingleton()->addTimeListener(this, mRenderPriority);
 }
 
-OGRE3DBody::OGRE3DBody(const NxOgre::ShapeDescriptions& shapes, const NxOgre::Matrix44& pose, OGRE3DRigidBodyDescription& description, OGRE3DRenderSystem* rendersystem)
+Body::Body(const NxOgre::ShapeDescriptions& shapes, const NxOgre::Matrix44& pose, BodyDescription& description, RenderSystem* rendersystem)
 : Actor(rendersystem->getScene()), // Take notice of the constructor we are using, it's designed for
                                    // classes that inherit from Actor. 
  mSceneNodeDestructorBehaviour(description.mSceneNodeDestructorBehaviour),
@@ -69,11 +63,8 @@ OGRE3DBody::OGRE3DBody(const NxOgre::ShapeDescriptions& shapes, const NxOgre::Ma
  mRenderSystem(rendersystem)
 {
  
- mName = description.mName;
- mNameHash = NxOgre::hash(mName);
- 
  // Create a dynamic RigidBody with the pose, scene and shape.
- // We can pass on the OGRE3DRigidBodyDescription as a RigidBodyDescription because it inherits from it,
+ // We can pass on the BodyDescription as a RigidBodyDescription because it inherits from it,
  createDynamic(pose, description, rendersystem->getScene(), shapes);
  mAlphaPose = pose;
  
@@ -85,8 +76,10 @@ OGRE3DBody::OGRE3DBody(const NxOgre::ShapeDescriptions& shapes, const NxOgre::Ma
  NxOgre::TimeController::getSingleton()->addTimeListener(this, mRenderPriority);
 }
 
-OGRE3DBody::~OGRE3DBody()
+Body::~Body()
 {
+ 
+ std::cout << "\n\n\nBody Destructor\n\n\n\n";
  
  // Stop NxOgre calling the advance function in the future, otherwise bad things would happen.
  NxOgre::TimeController::getSingleton()->removeTimeListener(this, mRenderPriority);
@@ -98,16 +91,16 @@ OGRE3DBody::~OGRE3DBody()
  // cleans up the Physics.
 }
 
-void OGRE3DBody::_destructNode(OGRE3DSceneNodeDestructorBehaviour behaviour)
+void Body::_destructNode(Enums::SceneNodeDestructorBehaviour behaviour)
 {
  
  if (mNode == 0)
   return;
  
- if (behaviour == OGRE3DSceneNodeDestructorBehaviour_Inherit)
+ if (behaviour == Enums::SceneNodeDestructorBehaviour_Inherit)
   behaviour = mSceneNodeDestructorBehaviour;
  
- if (behaviour == OGRE3DSceneNodeDestructorBehaviour_Destroy)
+ if (behaviour == Enums::SceneNodeDestructorBehaviour_Destroy)
  {
   // Remove all attachments.
   if (mNode->numAttachedObjects())
@@ -129,59 +122,47 @@ void OGRE3DBody::_destructNode(OGRE3DSceneNodeDestructorBehaviour behaviour)
  
 }
 
-unsigned int OGRE3DBody::getRigidBodyType() const
+unsigned int Body::getRigidBodyType() const
 {
- return _OGRE3DBody;
+ return Enums::RigidBodyType_Body;
 }
 
-Ogre::SceneManager* OGRE3DBody::getSceneManager()
+Ogre::SceneManager* Body::getSceneManager()
 {
  return mSceneManager;
 }
 
-Ogre::SceneNode* OGRE3DBody::getSceneNode()
+Ogre::SceneNode* Body::getSceneNode()
 {
  return mNode;
 }
 
-void OGRE3DBody::setSceneNode(Ogre::SceneNode* node, OGRE3DSceneNodeDestructorBehaviour behaviour)
+void Body::setSceneNode(Ogre::SceneNode* node, Enums::SceneNodeDestructorBehaviour behaviour)
 {
  _destructNode(behaviour);
  mNode = node;
 }
 
-OGRE3DSceneNodeDestructorBehaviour OGRE3DBody::getSceneNodeDestructorBehaviour() const
+Enums::SceneNodeDestructorBehaviour Body::getSceneNodeDestructorBehaviour() const
 {
  return mSceneNodeDestructorBehaviour;
 }
 
-void OGRE3DBody::setSceneNodeDestructorBehaviour(OGRE3DSceneNodeDestructorBehaviour behaviour)
+void Body::setSceneNodeDestructorBehaviour(Enums::SceneNodeDestructorBehaviour behaviour)
 {
  mSceneNodeDestructorBehaviour = behaviour;
 }
 
-bool OGRE3DBody::advance(float step, const NxOgre::Enums::Priority&)
+bool Body::advance(float step, const NxOgre::Enums::Priority&)
 {
-#if 0
- 
- NxOgre::TimeStep& ts = mScene->getTimeStep();
- NxOgre::Matrix44 current_pose(getGlobalPose());
- 
- if (mScene->getTimeStep().mSubSteps) // Did simulate this frame?
-  mAlphaPose = current_pose;
- 
- NxOgre::Matrix44 render_pose;
- NxOgre::Math::interpolate(mAlphaPose, current_pose, render_pose, ts.mAlpha);
- 
- mNode->setPosition(NxOgre::Vec3(render_pose).as<Ogre::Vector3>());
- mNode->setOrientation(NxOgre::Quat(render_pose).as<Ogre::Quaternion>());
- 
-#else
- mNode->setPosition(NxOgre::Vec3(getGlobalPose()).as<Ogre::Vector3>());
- mNode->setOrientation(NxOgre::Quat(getGlobalPose()).as<Ogre::Quaternion>());
-#endif
- 
+ mNode->setPosition( getGlobalPosition().as<Ogre::Vector3>() );
+ mNode->setOrientation( getGlobalOrientationQuat().as<Ogre::Quaternion>() );
  return true;
 }
 
                                                                                        
+
+}
+
+                                                                                       
+

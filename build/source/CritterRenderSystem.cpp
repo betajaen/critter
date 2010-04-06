@@ -1,20 +1,19 @@
-/** File: OGRE3DRenderSystem.cpp
-    Created on: 9-Nov-08
-    Author: Robin Southern "betajaen"
+/** 
     
-
-    Copyright (c) 2008-2009 Robin Southern
-
+    This file is part of Critter.
+    
+    Copyright (c) 2009 Robin Southern, http://www.nxogre.org
+    
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
     in the Software without restriction, including without limitation the rights
     to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
     copies of the Software, and to permit persons to whom the Software is
     furnished to do so, subject to the following conditions:
-
+    
     The above copyright notice and this permission notice shall be included in
     all copies or substantial portions of the Software.
-
+    
     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
     IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
     FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -22,38 +21,35 @@
     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
     THE SOFTWARE.
-
+    
 */
 
-                                                                                       
-
 #include "CritterRenderSystem.h"
-#include "NxOgre.h"
 #include "CritterBody.h"
-#include "CritterKinematicBody.h"
-#include "CritterRigidBodyDescription.h"
-#include "CritterRenderable.h"
+#include "CritterBodyDescription.h"
 #include "CritterPointRenderable.h"
 #include "CritterParticleRenderable.h"
-#include "Ogre.h"
+#include "CritterRenderable.h"
+#include "CritterKinematicBody.h"
 
                                                                                        
 
-unsigned int OGRE3DRenderSystem::mUniqueIdentifier = 0;
+unsigned int Critter::RenderSystem::mUniqueIdentifier = 0;
 
                                                                                        
 
-OGRE3DRenderSystem::OGRE3DRenderSystem(NxOgre::Scene* scene, Ogre::SceneManager* sceneMgr)
+namespace Critter
+{
+
+RenderSystem::RenderSystem(NxOgre::Scene* scene, Ogre::SceneManager* sceneMgr)
 : mScene(scene), mVisualDebuggerRenderable(0), mVisualDebuggerNode(0), mVisualDebuggerShown(false), mSceneManager(sceneMgr)
 {
 
  ::NxOgre::TimeController::getSingleton()->addTimeListener(this, ::NxOgre::Enums::Priority_MediumLow);
 }
 
-OGRE3DRenderSystem::~OGRE3DRenderSystem(void)
+RenderSystem::~RenderSystem(void)
 {
- 
- std::cout << "\n**********\n*************\n********\n OGRE3DRenderSystem destructor \n***************\n************\n";
  
  ::NxOgre::TimeController::getSingleton()->removeTimeListener(this, ::NxOgre::Enums::Priority_MediumLow);
  
@@ -64,24 +60,24 @@ OGRE3DRenderSystem::~OGRE3DRenderSystem(void)
   destroyRenderable(mVisualDebuggerRenderable);
  }
  
- std::cout << "Destroying Bodies" << std::endl;
  mBodies.clear();
  mRenderables.clear();
  mPointRenderables.clear();
+ 
 }
 
-NxOgre::Scene* OGRE3DRenderSystem::getScene(void)
+NxOgre::Scene* RenderSystem::getScene(void)
 {
  return mScene;
 }
 
-OGRE3DBody* OGRE3DRenderSystem::createBody(const NxOgre::ShapeDescription& shape, const NxOgre::Matrix44& pose, const Ogre::String& meshName, OGRE3DRigidBodyDescription& description)
+Body* RenderSystem::createBody(const NxOgre::ShapeDescription& shape, const NxOgre::Matrix44& pose, const Ogre::String& meshName, BodyDescription& description)
 {
  description.mNode = mSceneManager->getRootSceneNode()->createChildSceneNode(NxOgre::Vec3(pose).as<Ogre::Vector3>(), NxOgre::Quat(pose).as<Ogre::Quaternion>());
  if (meshName.length())
   description.mNode->attachObject(mSceneManager->createEntity(getUniqueName("entity"), meshName));
  
- OGRE3DBody* body = NXOGRE_NEW_NXOGRE OGRE3DBody(shape, pose, description, this);
+ Body* body = NXOGRE_NEW_NXOGRE Body(shape, pose, description, this);
  
  mBodies.insert(body->getNameHash(), body);
 
@@ -89,89 +85,89 @@ OGRE3DBody* OGRE3DRenderSystem::createBody(const NxOgre::ShapeDescription& shape
 }
 
 
-OGRE3DBody* OGRE3DRenderSystem::createBody(const NxOgre::ShapeDescriptions& shapes, const NxOgre::Matrix44& pose, const Ogre::String& meshName, OGRE3DRigidBodyDescription& description)
+Body* RenderSystem::createBody(const NxOgre::ShapeDescriptions& shapes, const NxOgre::Matrix44& pose, const Ogre::String& meshName, BodyDescription& description)
 {
  description.mNode = mSceneManager->getRootSceneNode()->createChildSceneNode(NxOgre::Vec3(pose).as<Ogre::Vector3>(), NxOgre::Quat(pose).as<Ogre::Quaternion>());
  if (meshName.length())
   description.mNode->attachObject(mSceneManager->createEntity(getUniqueName("entity"), meshName));
  
- OGRE3DBody* body = NXOGRE_NEW_NXOGRE OGRE3DBody(shapes, pose, description, this);
+ Body* body = NXOGRE_NEW_NXOGRE Body(shapes, pose, description, this);
  
  mBodies.insert(body->getNameHash(), body);
 
  return body;
 }
 
-OGRE3DBody* OGRE3DRenderSystem::createBody(const NxOgre::ShapeDescription& shape, const NxOgre::Matrix44& pose, OGRE3DRigidBodyDescription& description)
+Body* RenderSystem::createBody(const NxOgre::ShapeDescription& shape, const NxOgre::Matrix44& pose, BodyDescription& description)
 {
 
- OGRE3DBody* body = NXOGRE_NEW_NXOGRE OGRE3DBody(shape, pose, description, this);
+ Body* body = NXOGRE_NEW_NXOGRE Body(shape, pose, description, this);
  mBodies.insert(body->getNameHash(), body);
 
  return body;
 }
 
 
-OGRE3DBody* OGRE3DRenderSystem::createBody(const NxOgre::ShapeDescriptions& shapes, const NxOgre::Matrix44& pose, OGRE3DRigidBodyDescription& description)
+Body* RenderSystem::createBody(const NxOgre::ShapeDescriptions& shapes, const NxOgre::Matrix44& pose, BodyDescription& description)
 {
 
- OGRE3DBody* body = NXOGRE_NEW_NXOGRE OGRE3DBody(shapes, pose, description, this);
+ Body* body = NXOGRE_NEW_NXOGRE Body(shapes, pose, description, this);
  mBodies.insert(body->getNameHash(), body);
 
  return body;
 }
 
-void OGRE3DRenderSystem::destroyBody(OGRE3DBody* body)
+void RenderSystem::destroyBody(Body* body)
 {
- if (body == 0 || body->getRigidBodyType() != _OGRE3DBody)
+ if (body == 0 || body->getRigidBodyType() != Enums::RigidBodyType_Body)
   return;
  
  mBodies.erase(body->getNameHash());
 }
 
-OGRE3DRenderSystem::BodyIterator OGRE3DRenderSystem::getBodies()
+RenderSystem::BodyIterator RenderSystem::getBodies()
 {
  return BodyIterator(mBodies);
 }
 
-OGRE3DRenderable* OGRE3DRenderSystem::createRenderable(int type, const Ogre::String& materialName)
+Renderable* RenderSystem::createRenderable(int type, const Ogre::String& materialName)
 {
- OGRE3DRenderable* renderable = NXOGRE_NEW OGRE3DRenderable(type);
+ Renderable* renderable = NXOGRE_NEW Renderable(type);
  renderable->setMaterial(materialName);
  mRenderables.push_back(renderable);
  return renderable;
 }
 
-void OGRE3DRenderSystem::destroyRenderable(OGRE3DRenderable* renderable)
+void RenderSystem::destroyRenderable(Renderable* renderable)
 {
  if (renderable == 0)
   return;
  mRenderables.erase(renderable);
 }
 
-OGRE3DKinematicBody* OGRE3DRenderSystem::createKinematicBody(const NxOgre::ShapeDescription& shape, const NxOgre::Matrix44& pose, const Ogre::String& meshName, OGRE3DRigidBodyDescription& description)
+KinematicBody* RenderSystem::createKinematicBody(const NxOgre::ShapeDescription& shape, const NxOgre::Matrix44& pose, const Ogre::String& meshName,BodyDescription& description)
 {
  description.mNode = mSceneManager->getRootSceneNode()->createChildSceneNode(NxOgre::Vec3(pose).as<Ogre::Vector3>(), NxOgre::Quat(pose).as<Ogre::Quaternion>());
  if (meshName.length())
   description.mNode->attachObject(mSceneManager->createEntity(getUniqueName("entity"), meshName));
  
- OGRE3DKinematicBody* kb = NXOGRE_NEW_NXOGRE OGRE3DKinematicBody(shape, pose, description, this);
+ KinematicBody* kb = NXOGRE_NEW_NXOGRE KinematicBody(shape, pose, description, this);
  
  mKinematicBodies.insert(kb->getNameHash(), kb);
 
  return kb;
 }
 
-void  OGRE3DRenderSystem::destroyKinematicBody(OGRE3DKinematicBody* kinematicBody)
+void RenderSystem::destroyKinematicBody(KinematicBody* kinematicBody)
 {
- if (kinematicBody == 0 || kinematicBody->getRigidBodyType() != _OGRE3DKinematicBody)
+ if (kinematicBody == 0 || kinematicBody->getRigidBodyType() != Enums::RigidBodyType_KinematicBody)
   return;
  
  mKinematicBodies.erase(kinematicBody->getNameHash());
  
 }
 
-bool OGRE3DRenderSystem::advance(float, const NxOgre::Enums::Priority&)
+bool RenderSystem::advance(float, const NxOgre::Enums::Priority&)
 {
  if (mVisualDebuggerRenderable && mVisualDebuggerShown)
  {
@@ -181,12 +177,12 @@ bool OGRE3DRenderSystem::advance(float, const NxOgre::Enums::Priority&)
  return true;
 }
 
-void OGRE3DRenderSystem::setVisualisationMode(NxOgre::Enums::VisualDebugger type)
+void RenderSystem::setVisualisationMode(NxOgre::Enums::VisualDebugger type)
 {
 
- if (Ogre::MaterialManager::getSingletonPtr()->resourceExists("OGRE3DRenderSystem.VisualDebugger") == false)
+ if (Ogre::MaterialManager::getSingletonPtr()->resourceExists("RenderSystem.VisualDebugger") == false)
  {
-  Ogre::MaterialPtr material = Ogre::MaterialManager::getSingletonPtr()->create("OGRE3DRenderSystem.VisualDebugger", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+  Ogre::MaterialPtr material = Ogre::MaterialManager::getSingletonPtr()->create("RenderSystem.VisualDebugger", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
   material->getTechnique(0)->getPass(0)->setDepthBias(1);
   material->getTechnique(0)->getPass(0)->setAmbient(1,1,1);
   material->getTechnique(0)->getPass(0)->setSelfIllumination(1,1,1);
@@ -195,7 +191,7 @@ void OGRE3DRenderSystem::setVisualisationMode(NxOgre::Enums::VisualDebugger type
 
  if (mVisualDebuggerRenderable == 0)
  {
-  mVisualDebuggerRenderable = createRenderable(NxOgre::Enums::RenderableType_VisualDebugger, "OGRE3DRenderSystem.VisualDebugger");
+  mVisualDebuggerRenderable = createRenderable(NxOgre::Enums::RenderableType_VisualDebugger, "RenderSystem.VisualDebugger");
   ::NxOgre::World::getWorld()->getVisualDebugger()->setRenderable(mVisualDebuggerRenderable);
   mVisualDebuggerRenderable->setCastShadows(false);
   mVisualDebuggerNode = mSceneManager->getRootSceneNode()->createChildSceneNode();
@@ -213,76 +209,76 @@ void OGRE3DRenderSystem::setVisualisationMode(NxOgre::Enums::VisualDebugger type
  
 }
 
-bool OGRE3DRenderSystem::hasDebugVisualisation(void) const
+bool RenderSystem::hasDebugVisualisation(void) const
 {
  return mVisualDebuggerRenderable && mVisualDebuggerShown;
 }
 
-OGRE3DPointRenderable* OGRE3DRenderSystem::createPointRenderable(const Ogre::String& ogre_mesh_name)
+PointRenderable* RenderSystem::createPointRenderable(const Ogre::String& ogre_mesh_name)
 {
- OGRE3DPointRenderable* renderable = NXOGRE_NEW_NXOGRE OGRE3DPointRenderable(this, ogre_mesh_name);
+ PointRenderable* renderable = NXOGRE_NEW_NXOGRE PointRenderable(this, ogre_mesh_name);
  mPointRenderables.push_back(renderable);
  return renderable;
 }
 
-OGRE3DPointRenderable* OGRE3DRenderSystem::createPointRenderable(Ogre::MovableObject* movable_object)
+PointRenderable* RenderSystem::createPointRenderable(Ogre::MovableObject* movable_object)
 {
- OGRE3DPointRenderable* renderable = NXOGRE_NEW_NXOGRE OGRE3DPointRenderable(this, movable_object);
+ PointRenderable* renderable = NXOGRE_NEW_NXOGRE PointRenderable(this, movable_object);
  mPointRenderables.push_back(renderable);
  return renderable;
 }
 
-void OGRE3DRenderSystem::destroyPointRenderable(OGRE3DPointRenderable* renderable)
+void RenderSystem::destroyPointRenderable(PointRenderable* renderable)
 {
  if (renderable == 0)
   return;
  mPointRenderables.erase(renderable);
 }
 
-Ogre::SceneManager* OGRE3DRenderSystem::getSceneManager()
+Ogre::SceneManager* RenderSystem::getSceneManager()
 {
  return mSceneManager;
 }
 
-Ogre::String OGRE3DRenderSystem::getUniqueName(const Ogre::String& prefix) const
+Ogre::String RenderSystem::getUniqueName(const Ogre::String& prefix) const
 {
  return prefix + "-" + Ogre::StringConverter::toString(mUniqueIdentifier++);
 }
 
-NxOgre::Cloth* OGRE3DRenderSystem::createCloth(const NxOgre::ClothDescription& description, const Ogre::String& materialName)
+NxOgre::Cloth* RenderSystem::createCloth(const NxOgre::ClothDescription& description, const Ogre::String& materialName)
 {
- OGRE3DRenderable* renderable = createRenderable(NxOgre::Enums::RenderableType_PhysXMesh);
+ Renderable* renderable = createRenderable(NxOgre::Enums::RenderableType_PhysXMesh);
  mSceneManager->getRootSceneNode()->attachObject(renderable);
  renderable->setMaterial(materialName);
  return mScene->createCloth(description, renderable, NxOgre::Enums::Priority_MediumLow);
 }
 
-void OGRE3DRenderSystem::destroyCloth(NxOgre::Cloth* cloth)
+void RenderSystem::destroyCloth(NxOgre::Cloth* cloth)
 {
  if (cloth == 0)
   return;
 
- OGRE3DRenderable* renderable = static_cast<OGRE3DRenderable*>(cloth->getRenderable());
+ Renderable* renderable = static_cast<Renderable*>(cloth->getRenderable());
 
  mSceneManager->getRootSceneNode()->detachObject(renderable);
  destroyRenderable(renderable);
  mScene->destroyCloth(cloth);
 }
 
-NxOgre::SoftBody* OGRE3DRenderSystem::createSoftBody(const NxOgre::SoftBodyDescription& description, const Ogre::String& materialName)
+NxOgre::SoftBody* RenderSystem::createSoftBody(const NxOgre::SoftBodyDescription& description, const Ogre::String& materialName)
 {
- OGRE3DRenderable* renderable = createRenderable(NxOgre::Enums::RenderableType_SoftBody);
+ Renderable* renderable = createRenderable(NxOgre::Enums::RenderableType_SoftBody);
  mSceneManager->getRootSceneNode()->attachObject(renderable);
  renderable->setMaterial(materialName);
  return mScene->createSoftBody(description, renderable, NxOgre::Enums::Priority_MediumLow);
 }
 
-void OGRE3DRenderSystem::destroySoftBody(NxOgre::SoftBody* cloth)
+void RenderSystem::destroySoftBody(NxOgre::SoftBody* cloth)
 {
  if (cloth == 0)
   return;
 
- OGRE3DRenderable* renderable = static_cast<OGRE3DRenderable*>(cloth->getRenderable());
+ Renderable* renderable = static_cast<Renderable*>(cloth->getRenderable());
 
  mSceneManager->getRootSceneNode()->detachObject(renderable);
  destroyRenderable(renderable);
@@ -290,20 +286,20 @@ void OGRE3DRenderSystem::destroySoftBody(NxOgre::SoftBody* cloth)
 }
 
 
-NxOgre::Fluid* OGRE3DRenderSystem::createFluid(const NxOgre::FluidDescription& description, const Ogre::String& materialName, OGRE3DFluidRenderableType renderable_type)
+NxOgre::Fluid* RenderSystem::createFluid(const NxOgre::FluidDescription& description, const Ogre::String& materialName, Enums::FluidRenderableType renderable_type)
 {
 
  NxOgre::Fluid* fluid;
 
- if (renderable_type == OGRE3DFluidType_OgreParticle)
+ if (renderable_type == Enums::FluidType_OgreParticle)
  {
-  OGRE3DParticleRenderable* renderable = new OGRE3DParticleRenderable(materialName, this);
+  ParticleRenderable* renderable = new ParticleRenderable(materialName, this);
   fluid = mScene->createFluid(description, renderable);
   renderable->initialise(fluid);
  }
  else
  {
-  OGRE3DRenderable* renderable = createRenderable(renderable_type);
+  Renderable* renderable = createRenderable(renderable_type);
   mSceneManager->getRootSceneNode()->attachObject(renderable);
   renderable->setMaterial(materialName);
   fluid = mScene->createFluid(description, renderable);
@@ -312,7 +308,7 @@ NxOgre::Fluid* OGRE3DRenderSystem::createFluid(const NxOgre::FluidDescription& d
  return fluid;
 }
 
-void OGRE3DRenderSystem::destroyFluid(NxOgre::Fluid* fluid)
+void RenderSystem::destroyFluid(NxOgre::Fluid* fluid)
 {
  
  if (fluid == 0)
@@ -320,19 +316,22 @@ void OGRE3DRenderSystem::destroyFluid(NxOgre::Fluid* fluid)
  
  NxOgre::Renderable* renderable = fluid->getRenderable();
  
- if (renderable->getType() == OGRE3DFluidType_OgreParticle)
+ if (renderable->getType() == Enums::FluidType_OgreParticle)
  {
   delete renderable;
  }
  else
  {
-  OGRE3DRenderable* ogre_renderable = static_cast<OGRE3DRenderable*>(renderable);
+  Renderable* ogre_renderable = static_cast<Renderable*>(renderable);
   mSceneManager->getRootSceneNode()->detachObject(ogre_renderable);
   destroyRenderable(ogre_renderable);
  }
  
  mScene->destroyFluid(fluid);
+ 
 }
 
 
                                                                                        
+
+} // namespace

@@ -1,0 +1,19 @@
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Critter", "vc9\Critter.vcproj", "{45C50569-9FEB-E8AC-CA69-E9664FAEB81E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		DebugStatic|Win32 = DebugStatic|Win32
+		FinalStatic|Win32 = FinalStatic|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{45C50569-9FEB-E8AC-CA69-E9664FAEB81E}.DebugStatic|Win32.ActiveCfg = DebugStatic|Win32
+		{45C50569-9FEB-E8AC-CA69-E9664FAEB81E}.DebugStatic|Win32.Build.0 = DebugStatic|Win32
+		{45C50569-9FEB-E8AC-CA69-E9664FAEB81E}.FinalStatic|Win32.ActiveCfg = FinalStatic|Win32
+		{45C50569-9FEB-E8AC-CA69-E9664FAEB81E}.FinalStatic|Win32.Build.0 = FinalStatic|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

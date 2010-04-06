@@ -1,20 +1,19 @@
-/** File: OGRE3DRenderable.cpp
-    Created on: 18-May-09
-    Author: Robin Southern "betajaen"
+/** 
     
-
-    Copyright (c) 2008-2009 Robin Southern
-
+    This file is part of Critter.
+    
+    Copyright (c) 2009 Robin Southern, http://www.nxogre.org
+    
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
     in the Software without restriction, including without limitation the rights
     to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
     copies of the Software, and to permit persons to whom the Software is
     furnished to do so, subject to the following conditions:
-
+    
     The above copyright notice and this permission notice shall be included in
     all copies or substantial portions of the Software.
-
+    
     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
     IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
     FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -22,18 +21,21 @@
     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
     THE SOFTWARE.
-
+    
 */
 
-                                                                                       
-
 #include "CritterPointRenderable.h"
+
 #include "CritterRenderSystem.h"
-#include "Ogre.h"
 
                                                                                        
 
-OGRE3DPointRenderable::OGRE3DPointRenderable(OGRE3DRenderSystem* renderSystem, const Ogre::String& ogre_mesh_name)
+namespace Critter
+{
+
+                                                                                       
+
+PointRenderable::PointRenderable(RenderSystem* renderSystem, const Ogre::String& ogre_mesh_name)
 : mRenderSystem(renderSystem), mNode(0)
 {
  mNode = mRenderSystem->getSceneManager()->getRootSceneNode()->createChildSceneNode();
@@ -41,25 +43,25 @@ OGRE3DPointRenderable::OGRE3DPointRenderable(OGRE3DRenderSystem* renderSystem, c
 }
 
 
-OGRE3DPointRenderable::OGRE3DPointRenderable(OGRE3DRenderSystem* renderSystem, Ogre::MovableObject* movable_object)
+PointRenderable::PointRenderable(RenderSystem* renderSystem, Ogre::MovableObject* movable_object)
 {
  mNode = mRenderSystem->getSceneManager()->getRootSceneNode()->createChildSceneNode();
  addMovableObject(movable_object);
 }
 
-OGRE3DPointRenderable::~OGRE3DPointRenderable()
+PointRenderable::~PointRenderable()
 {
  destroyNode(mNode);
  mNode = 0;
 }
 
-void OGRE3DPointRenderable::render(const NxOgre::Vec3& position, const NxOgre::Quat& orientation)
+void PointRenderable::render(const NxOgre::Vec3& position, const NxOgre::Quat& orientation)
 {
  mNode->setPosition(position.as<Ogre::Vector3>());
  mNode->setOrientation(orientation.as<Ogre::Quaternion>());
 }
 
-void OGRE3DPointRenderable::destroyNode(Ogre::SceneNode* node)
+void PointRenderable::destroyNode(Ogre::SceneNode* node)
 {
  
  if (node == 0)
@@ -89,7 +91,7 @@ void OGRE3DPointRenderable::destroyNode(Ogre::SceneNode* node)
  mRenderSystem->getSceneManager()->destroySceneNode(node);
 }
 
-Ogre::Entity* OGRE3DPointRenderable::fetchEntity(const Ogre::String& name)
+Ogre::Entity* PointRenderable::fetchEntity(const Ogre::String& name)
 {
  Ogre::Entity* entity = NULL;
  
@@ -112,7 +114,7 @@ Ogre::Entity* OGRE3DPointRenderable::fetchEntity(const Ogre::String& name)
  return entity;
 }
 
-void OGRE3DPointRenderable::parseMovableObject(Ogre::MovableObject* mo)
+void PointRenderable::parseMovableObject(Ogre::MovableObject* mo)
 {
  if (mo == 0)
  return;
@@ -122,13 +124,13 @@ void OGRE3DPointRenderable::parseMovableObject(Ogre::MovableObject* mo)
 }
 
 
-void OGRE3DPointRenderable::addSceneNode(Ogre::SceneNode*)
+void PointRenderable::addSceneNode(Ogre::SceneNode*)
 {
 
 
 }
 
-void OGRE3DPointRenderable::addSceneNode(const Ogre::String& name)
+void PointRenderable::addSceneNode(const Ogre::String& name)
 {
   
   if (mRenderSystem->getSceneManager()->hasSceneNode(name) == false)
@@ -144,19 +146,19 @@ void OGRE3DPointRenderable::addSceneNode(const Ogre::String& name)
 
 }
 
-void OGRE3DPointRenderable::addEntity(Ogre::Entity* entity)
+void PointRenderable::addEntity(Ogre::Entity* entity)
 {
  parseMovableObject(entity);
  mNode->attachObject(entity);
 }
 
-void OGRE3DPointRenderable::addMovableObject(Ogre::MovableObject* mo)
+void PointRenderable::addMovableObject(Ogre::MovableObject* mo)
 {
  parseMovableObject(mo);
  mNode->attachObject(mo);
 }
 
-void OGRE3DPointRenderable::removeSceneNode(Ogre::SceneNode* node)
+void PointRenderable::removeSceneNode(Ogre::SceneNode* node)
 {
 
  if (node == 0)
@@ -172,7 +174,7 @@ void OGRE3DPointRenderable::removeSceneNode(Ogre::SceneNode* node)
 
 }
 
-void OGRE3DPointRenderable::removeSceneNode(const Ogre::String& name)
+void PointRenderable::removeSceneNode(const Ogre::String& name)
 {
  if (mRenderSystem->getSceneManager()->hasSceneNode(name) == false)
   return;
@@ -188,27 +190,27 @@ void OGRE3DPointRenderable::removeSceneNode(const Ogre::String& name)
 
 }
 
-void OGRE3DPointRenderable::removeEntity(Ogre::Entity* entity)
+void PointRenderable::removeEntity(Ogre::Entity* entity)
 {
  removeMovableObject(entity);
 }
 
-void OGRE3DPointRenderable::removeEntity(const Ogre::String& name)
+void PointRenderable::removeEntity(const Ogre::String& name)
 {
  removeMovableObject(name);
 }
 
-void OGRE3DPointRenderable::destroyEntity(Ogre::Entity* entity)
+void PointRenderable::destroyEntity(Ogre::Entity* entity)
 {
  destroyMovableObject(entity);
 }
 
-void OGRE3DPointRenderable::destroyEntity(const Ogre::String& name)
+void PointRenderable::destroyEntity(const Ogre::String& name)
 {
  destroyMovableObject(name);
 }
 
-void OGRE3DPointRenderable::removeMovableObject(Ogre::MovableObject* mo)
+void PointRenderable::removeMovableObject(Ogre::MovableObject* mo)
 {
  if (mo == 0)
   return;
@@ -216,21 +218,25 @@ void OGRE3DPointRenderable::removeMovableObject(Ogre::MovableObject* mo)
  mNode->detachObject(mo);
 }
 
-void OGRE3DPointRenderable::removeMovableObject(const Ogre::String& name)
+void PointRenderable::removeMovableObject(const Ogre::String& name)
 {
  mNode->detachObject(name);
 }
 
-void OGRE3DPointRenderable::destroyMovableObject(Ogre::MovableObject* mo)
+void PointRenderable::destroyMovableObject(Ogre::MovableObject* mo)
 {
  removeMovableObject(mo);
  mRenderSystem->getSceneManager()->destroyMovableObject(mo);
 }
 
-void OGRE3DPointRenderable::destroyMovableObject(const Ogre::String& name)
+void PointRenderable::destroyMovableObject(const Ogre::String& name)
 {
  Ogre::MovableObject* mo = mNode->getAttachedObject(name);
  destroyMovableObject(mo);
 }
+
+                                                                                       
+
+} // namespace
 
                                                                                        

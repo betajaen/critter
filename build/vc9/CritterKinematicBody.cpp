@@ -1,20 +1,19 @@
-/** File: OGRE3DKinematicBody.cpp
-    Created on: 10-Nov-08
-    Author: Robin Southern "betajaen"
+/** 
     
-
-    Copyright (c) 2008-2009 Robin Southern
-
+    This file is part of Critter.
+    
+    Copyright (c) 2009 Robin Southern, http://www.nxogre.org
+    
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
     in the Software without restriction, including without limitation the rights
     to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
     copies of the Software, and to permit persons to whom the Software is
     furnished to do so, subject to the following conditions:
-
+    
     The above copyright notice and this permission notice shall be included in
     all copies or substantial portions of the Software.
-
+    
     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
     IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
     FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -22,23 +21,23 @@
     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
     THE SOFTWARE.
-
+    
 */
 
-                                                                                       
-
 #include "CritterKinematicBody.h"
-#include "CritterRigidBodyDescription.h"
 #include "CritterRenderSystem.h"
-#include "Ogre.h"
-#include "NxOgreFunctions.h"
-#include "NxOgreTimeController.h"
-
-unsigned int OGRE3DKinematicBody::mNextBodyID = 0;
+#include "CritterBodyDescription.h"
 
                                                                                        
 
-OGRE3DKinematicBody::OGRE3DKinematicBody(const NxOgre::ShapeDescription& shape, const NxOgre::Matrix44& pose, const OGRE3DRigidBodyDescription& description, OGRE3DRenderSystem* rendersystem)
+unsigned int Critter::KinematicBody::mNextBodyID = 0;
+
+namespace Critter
+{
+
+                                                                                       
+
+KinematicBody::KinematicBody(const NxOgre::ShapeDescription& shape, const NxOgre::Matrix44& pose, const BodyDescription& description, RenderSystem* rendersystem)
 : KinematicActor(rendersystem->getScene()),
                                    // Take notice of the constructor we are using, it's designed for
                                    // classes that inherit from Actor. 
@@ -53,7 +52,7 @@ OGRE3DKinematicBody::OGRE3DKinematicBody(const NxOgre::ShapeDescription& shape, 
  createDynamic(pose, description, rendersystem->getScene(), shape);
  
  // Since NxOgre doesn't know or care about our Ogre stuff, we copy it over. This is the correct time to create
- // or turn on things related to the OGRE3DKinematicBody.
+ // or turn on things related to the KinematicBody.
  
  mSceneManager = rendersystem->getSceneManager();
  
@@ -63,7 +62,7 @@ OGRE3DKinematicBody::OGRE3DKinematicBody(const NxOgre::ShapeDescription& shape, 
  NxOgre::TimeController::getSingleton()->addTimeListener(this, mRenderPriority);
 }
 
-OGRE3DKinematicBody::~OGRE3DKinematicBody()
+KinematicBody::~KinematicBody()
 {
  
  NxOgre::TimeController::getSingleton()->removeTimeListener(this, mRenderPriority);
@@ -74,13 +73,13 @@ OGRE3DKinematicBody::~OGRE3DKinematicBody()
  // We leave the physics stuff to the Actors destructor, including freeing the shapes.
 }
 
-void OGRE3DKinematicBody::_destructNode(OGRE3DSceneNodeDestructorBehaviour behaviour)
+void KinematicBody::_destructNode(Enums::SceneNodeDestructorBehaviour behaviour)
 {
  
- if (behaviour == OGRE3DSceneNodeDestructorBehaviour_Inherit)
+ if (behaviour == Enums::SceneNodeDestructorBehaviour_Inherit)
   behaviour = mSceneNodeDestructorBehaviour;
  
- if (behaviour == OGRE3DSceneNodeDestructorBehaviour_Destroy)
+ if (behaviour == Enums::SceneNodeDestructorBehaviour_Destroy)
  {
   // Remove all attachments.
   if (mNode->numAttachedObjects())
@@ -102,28 +101,33 @@ void OGRE3DKinematicBody::_destructNode(OGRE3DSceneNodeDestructorBehaviour behav
  
 }
 
-unsigned int OGRE3DKinematicBody::getRigidBodyType() const
+unsigned int KinematicBody::getRigidBodyType() const
 {
- return _OGRE3DKinematicBody;
+ return Enums::RigidBodyType_KinematicBody;
 }
 
-Ogre::SceneManager* OGRE3DKinematicBody::getSceneManager()
+Ogre::SceneManager* KinematicBody::getSceneManager()
 {
  return mSceneManager;
 }
 
-Ogre::SceneNode* OGRE3DKinematicBody::getSceneNode()
+Ogre::SceneNode* KinematicBody::getSceneNode()
 {
  return mNode;
 }
 
-bool OGRE3DKinematicBody::advance(float, const NxOgre::Enums::Priority&)
+bool KinematicBody::advance(float, const NxOgre::Enums::Priority&)
 {
- // "Rendering" in Ogre merely means just moving a scenenode to it's new position and orientation.
- Ogre::Matrix4 m4 = toMatrix44(getGlobalPose());
- mNode->setPosition(m4.getTrans());
- mNode->setOrientation(m4.extractQuaternion());
+ mNode->setPosition( getGlobalPosition().as<Ogre::Vector3>() );
+ mNode->setOrientation( getGlobalOrientationQuat().as<Ogre::Quaternion>() );
  return true;
 }
 
+
+
                                                                                        
+
+} // namespace
+
+                                                                                       
+

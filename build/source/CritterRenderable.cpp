@@ -1,20 +1,19 @@
-/** File: OGRE3DRenderable.cpp
-    Created on: 13-Feb-09
-    Author: Robin Southern "betajaen"
+/** 
     
-
-    Copyright (c) 2008-2009 Robin Southern
-
+    This file is part of Critter.
+    
+    Copyright (c) 2009 Robin Southern, http://www.nxogre.org
+    
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
     in the Software without restriction, including without limitation the rights
     to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
     copies of the Software, and to permit persons to whom the Software is
     furnished to do so, subject to the following conditions:
-
+    
     The above copyright notice and this permission notice shall be included in
     all copies or substantial portions of the Software.
-
+    
     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
     IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
     FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -22,36 +21,36 @@
     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
     THE SOFTWARE.
-
+    
 */
 
-                                                                                       
-
 #include "CritterRenderable.h"
-#include "CritterRenderSystem.h"
-#include "Ogre.h"
 
                                                                                        
 
-// operation, normals, colour, indexes, texture-coords, 16bit indexes.
-OGRE3DRenderable::RenderProfile OGRE3DRenderable::NXOGRE_VISUALDEBUGGER =
-                  OGRE3DRenderable::RenderProfile (Ogre::RenderOperation::OT_LINE_LIST, false, true, false, false, false);
+Critter::Renderable::RenderProfile  Critter::Renderable::NXOGRE_VISUALDEBUGGER =
+                  Critter::Renderable::RenderProfile (Ogre::RenderOperation::OT_LINE_LIST, false, true, false, false, false);
 
-OGRE3DRenderable::RenderProfile OGRE3DRenderable::NXOGRE_PHYSXMESH =
-                  OGRE3DRenderable::RenderProfile (Ogre::RenderOperation::OT_TRIANGLE_LIST, true, false, true, true, false);
+Critter::Renderable::RenderProfile  Critter::Renderable::NXOGRE_PHYSXMESH =
+                  Critter::Renderable::RenderProfile (Ogre::RenderOperation::OT_TRIANGLE_LIST, true, false, true, true, false);
 
-OGRE3DRenderable::RenderProfile OGRE3DRenderable::NXOGRE_PARTICLE_POINTS =
-                  OGRE3DRenderable::RenderProfile (Ogre::RenderOperation::OT_POINT_LIST, false, false, false, false, false);
+Critter::Renderable::RenderProfile  Critter::Renderable::NXOGRE_PARTICLE_POINTS =
+                  Critter::Renderable::RenderProfile (Ogre::RenderOperation::OT_POINT_LIST, false, false, false, false, false);
 
-OGRE3DRenderable::RenderProfile OGRE3DRenderable::NXOGRE_PARTICLE_VELOCITIES =
-                  OGRE3DRenderable::RenderProfile (Ogre::RenderOperation::OT_LINE_LIST, false, false, false, false, false);
+Critter::Renderable::RenderProfile  Critter::Renderable::NXOGRE_PARTICLE_VELOCITIES =
+                  Critter::Renderable::RenderProfile (Ogre::RenderOperation::OT_LINE_LIST, false, false, false, false, false);
 
-OGRE3DRenderable::RenderProfile OGRE3DRenderable::NXOGRE_SOFTBODY =
-                  OGRE3DRenderable::RenderProfile (Ogre::RenderOperation::OT_TRIANGLE_LIST, false, false, true, false, false);
+Critter::Renderable::RenderProfile  Critter::Renderable::NXOGRE_SOFTBODY =
+                  Critter::Renderable::RenderProfile (Ogre::RenderOperation::OT_TRIANGLE_LIST, false, false, true, false, false);
 
-                                        
+                                                                                       
 
-OGRE3DRenderable::RenderProfile::RenderProfile()
+namespace Critter
+{
+
+                                                                                       
+
+Renderable::RenderProfile::RenderProfile()
 : mRenderOperation(Ogre::RenderOperation::OT_POINT_LIST),
   usesNormals(false),
   usesColourVertices(false),
@@ -61,7 +60,7 @@ OGRE3DRenderable::RenderProfile::RenderProfile()
 {
 }
 
-OGRE3DRenderable::RenderProfile::RenderProfile(Ogre::RenderOperation::OperationType op, bool n, bool c, bool i, bool t, bool _16)
+Renderable::RenderProfile::RenderProfile(Ogre::RenderOperation::OperationType op, bool n, bool c, bool i, bool t, bool _16)
 : mRenderOperation(op),
   usesNormals(n),
   usesColourVertices(c),
@@ -71,20 +70,20 @@ OGRE3DRenderable::RenderProfile::RenderProfile(Ogre::RenderOperation::OperationT
 {
 }
 
-OGRE3DRenderable::OGRE3DRenderable(int type)
+Renderable::Renderable(int type)
 : NxOgre::Renderable(type), Ogre::SimpleRenderable()
 {
  _createProfile(mType);
  _initialise();
 }
 
-OGRE3DRenderable::~OGRE3DRenderable()
+Renderable::~Renderable()
 {
  NXOGRE_DELETE(mRenderOp.vertexData);
  NXOGRE_DELETE(mRenderOp.indexData);
 }
 
-void OGRE3DRenderable::drawSoftBodySimple(NxOgre::PhysXMeshData* data, const NxOgre::Bounds3& bounds)
+void Renderable::drawSoftBodySimple(NxOgre::PhysXMeshData* data, const NxOgre::Bounds3& bounds)
 {
  // Early escape.
  if (data->getNbVertices() < 3)
@@ -108,7 +107,7 @@ void OGRE3DRenderable::drawSoftBodySimple(NxOgre::PhysXMeshData* data, const NxO
  // Done.
 }
 
-void OGRE3DRenderable::drawCloth(NxOgre::PhysXMeshData* data, NxOgre::Buffer<float>& textureCoords, const NxOgre::Bounds3& bounds)
+void Renderable::drawCloth(NxOgre::PhysXMeshData* data, NxOgre::Buffer<float>& textureCoords, const NxOgre::Bounds3& bounds)
 {
  // Early escape.
  if (data->getNbVertices() < 3)
@@ -138,7 +137,7 @@ void OGRE3DRenderable::drawCloth(NxOgre::PhysXMeshData* data, NxOgre::Buffer<flo
  // Done.
 }
 
-void OGRE3DRenderable::drawClothFast(NxOgre::PhysXMeshData* data, const NxOgre::Bounds3& bounds)
+void Renderable::drawClothFast(NxOgre::PhysXMeshData* data, const NxOgre::Bounds3& bounds)
 {
  
  // Resize buffers if necessary.
@@ -155,7 +154,7 @@ void OGRE3DRenderable::drawClothFast(NxOgre::PhysXMeshData* data, const NxOgre::
  
  // Done.
 }
-void OGRE3DRenderable::drawVisualDebugger(NxOgre::VisualDebuggerMeshData* data)
+void Renderable::drawVisualDebugger(NxOgre::VisualDebuggerMeshData* data)
 {
  _resize(data->getNbLines() * 2, 0);
 
@@ -168,9 +167,10 @@ void OGRE3DRenderable::drawVisualDebugger(NxOgre::VisualDebuggerMeshData* data)
  
 }
 
-void OGRE3DRenderable::drawFluid(NxOgre::PhysXParticleData* data, const NxOgre::Bounds3& bounds)
+void Renderable::drawFluid(NxOgre::PhysXParticleData* data, const NxOgre::Bounds3& bounds)
 {
- if (mType == OGRE3DFluidType_Position)
+  
+ if (mType == Enums::FluidType_Position)
  {
   
   // Resize buffers if necessary.
@@ -180,7 +180,7 @@ void OGRE3DRenderable::drawFluid(NxOgre::PhysXParticleData* data, const NxOgre::
   mVertexBuffer->writeData(0, 3 * data->getNbParticles() * sizeof(float), data->getPositions());
   
  }
- else if (mType == OGRE3DFluidType_Velocity)
+ else if (mType == Enums::FluidType_Velocity)
  {
   
   // Resize buffers if necessary.
@@ -226,33 +226,33 @@ void OGRE3DRenderable::drawFluid(NxOgre::PhysXParticleData* data, const NxOgre::
 }
 
 
-void OGRE3DRenderable::_createProfile(int type)
+void Renderable::_createProfile(int type)
 {
  switch(type)
  {
   case NxOgre::Enums::RenderableType_VisualDebugger:
-   mProfile = OGRE3DRenderable::NXOGRE_VISUALDEBUGGER;
+   mProfile = Renderable::NXOGRE_VISUALDEBUGGER;
   break;
   
   case NxOgre::Enums::RenderableType_PhysXMesh:
-   mProfile = OGRE3DRenderable::NXOGRE_PHYSXMESH;
+   mProfile = Renderable::NXOGRE_PHYSXMESH;
   break;
   
   case NxOgre::Enums::RenderableType_ParticlePoints:
-   mProfile = OGRE3DRenderable::NXOGRE_PARTICLE_POINTS;
+   mProfile = Renderable::NXOGRE_PARTICLE_POINTS;
   break;
 
-  case OGRE3DFluidType_Velocity:
-   mProfile = OGRE3DRenderable::NXOGRE_PARTICLE_VELOCITIES;
+  case Enums::FluidType_Velocity:
+   mProfile = Renderable::NXOGRE_PARTICLE_VELOCITIES;
   break;
   
   case NxOgre::Enums::RenderableType_SoftBody:
-   mProfile = OGRE3DRenderable::NXOGRE_SOFTBODY;
+   mProfile = Renderable::NXOGRE_SOFTBODY;
   break;
  }
 }
 
-void OGRE3DRenderable::_initialise()
+void Renderable::_initialise()
 {
  // Op.
  mRenderOp.operationType = mProfile.mRenderOperation;
@@ -287,7 +287,7 @@ void OGRE3DRenderable::_initialise()
  mIndexBufferCapacity = 0;
 }
 
-void OGRE3DRenderable::_resize(size_t vertexCount, size_t indexCount)
+void Renderable::_resize(size_t vertexCount, size_t indexCount)
 {
   // Prepare vertex buffer
   size_t newVertCapacity = mVertexBufferCapacity;
@@ -407,12 +407,12 @@ void OGRE3DRenderable::_resize(size_t vertexCount, size_t indexCount)
   }
 }
 
-float OGRE3DRenderable::getBoundingRadius(void) const
+float Renderable::getBoundingRadius(void) const
 {
  return Ogre::Math::Sqrt(std::max(mBox.getMaximum().squaredLength(), mBox.getMinimum().squaredLength()));
 }
 
-float OGRE3DRenderable::getSquaredViewDepth(const Ogre::Camera* cam) const
+float Renderable::getSquaredViewDepth(const Ogre::Camera* cam) const
 {
  Ogre::Vector3 vMin, vMax, vMid, vDist;
  vMin = mBox.getMinimum();
@@ -421,3 +421,11 @@ float OGRE3DRenderable::getSquaredViewDepth(const Ogre::Camera* cam) const
  vDist = cam->getDerivedPosition() - vMid;
  return vDist.squaredLength();
 }
+
+
+
+                                                                                       
+
+} // namespace
+
+                                                                                       

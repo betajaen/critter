@@ -1,20 +1,19 @@
-/** File: OGRE3DPointRenderable.h
-    Created on: 18-May-09
-    Author: Robin Southern "betajaen"
+/** 
     
-
-    Copyright (c) 2008-2009 Robin Southern
-
+    This file is part of Critter.
+    
+    Copyright (c) 2009 Robin Southern, http://www.nxogre.org
+    
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
     in the Software without restriction, including without limitation the rights
     to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
     copies of the Software, and to permit persons to whom the Software is
     furnished to do so, subject to the following conditions:
-
+    
     The above copyright notice and this permission notice shall be included in
     all copies or substantial portions of the Software.
-
+    
     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
     IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
     FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -25,23 +24,23 @@
     
 */
 
-#ifndef OGRE3D_PARTICLERENDERABLE_H
-#define OGRE3D_PARTICLERENDERABLE_H
-
                                                                                        
 
-#include "NxOgre.h"
+#ifndef CRITTER_PARTICLERENDERABLE_H
+#define CRITTER_PARTICLERENDERABLE_H
+
+#include "CritterStable.h"
 #include "CritterCommon.h"
-#include <OgreSimpleRenderable.h>
 
                                                                                        
 
-/** \brief A OGRE3D RenderSystem implementation of the PointRenderable class.
-*/
-class OGRE3DExportClass OGRE3DParticleRenderable : public NxOgre::UserExtendedClassAllocatable, public NxOgre::Renderable
+namespace Critter
+{
+
+class CritterPublicClass ParticleRenderable : public NxOgre::UserExtendedClassAllocatable, public NxOgre::Renderable
 {
   
-  friend class OGRE3DRenderSystem;
+  friend class RenderSystem;
     
   public:
     
@@ -62,7 +61,7 @@ class OGRE3DExportClass OGRE3DParticleRenderable : public NxOgre::UserExtendedCl
      
      /** \brief Get the SceneManager used.
      */
-     OGRE3DRenderSystem*                       getRenderSystem();
+     RenderSystem*                       getRenderSystem();
 
      /** \brief
      */
@@ -70,11 +69,11 @@ class OGRE3DExportClass OGRE3DParticleRenderable : public NxOgre::UserExtendedCl
 
      /** \brief
      */
-     OGRE3DParticleRenderable(const Ogre::String& material, OGRE3DRenderSystem*);
+     ParticleRenderable(const Ogre::String& material, RenderSystem*);
      
      /** \brief
      */
-    ~OGRE3DParticleRenderable(void);
+    ~ParticleRenderable(void);
      
   protected:
      
@@ -88,7 +87,7 @@ class OGRE3DExportClass OGRE3DParticleRenderable : public NxOgre::UserExtendedCl
      
      /** \brief RenderSystem
      */
-     OGRE3DRenderSystem*    mRenderSystem;
+     RenderSystem*    mRenderSystem;
      
      /** \brief
      */
@@ -104,11 +103,10 @@ class OGRE3DExportClass OGRE3DParticleRenderable : public NxOgre::UserExtendedCl
      
 };
 
+
+
+} // namespace
+
                                                                                        
 
 #endif
-
-/*
-
-
-*/

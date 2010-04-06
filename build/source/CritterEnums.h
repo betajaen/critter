@@ -1,6 +1,6 @@
 /** 
     
-    This file is part of NxOgre.
+    This file is part of Critter.
     
     Copyright (c) 2009 Robin Southern, http://www.nxogre.org
     
@@ -26,15 +26,49 @@
 
                                                                                        
 
-#ifndef NXOGRE_OGRE3D_VERSION_H
-#define NXOGRE_OGRE3D_VERSION_H
+#ifndef CRITTER_ENUMS_H
+#define CRITTER_ENUMS_H
 
                                                                                        
 
-// Mon Mar 15 15:39:54 +0000 2010
-#define NxOgreOGRE3DVersionMajor 0
-#define NxOgreVersionMinor 3
-#define NxOgreVersionRelease 1000
+namespace Critter
+{
+
+                                                                                       
+
+namespace Enums
+{
+
+                                                                                       
+
+enum SceneNodeDestructorBehaviour
+{
+ SceneNodeDestructorBehaviour_Destroy, //< \brief Destroy the SceneNode, it's children, and it's movable objects.
+ SceneNodeDestructorBehaviour_Remove, //< \brief Remove itself from the Root SceneNode.
+ SceneNodeDestructorBehaviour_Inherit //< \brief Use the behaviour as given by the class.
+};
+
+
+enum RigidBodyTypes
+{
+ RigidBodyType_Body          = NxOgre::Enums::RigidBodyType_USER_BEGIN + 8371,
+ RigidBodyType_KinematicBody
+};
+
+enum FluidRenderableType
+{
+ FluidType_Position     = NxOgre::Enums::RenderableType_ParticlePoints,
+ FluidType_Velocity     = FluidType_Position + 100,
+ FluidType_OgreParticle = FluidType_Position + 101,
+};
+
+                                                                                       
+
+} // enums
+
+                                                                                       
+
+} // critter
 
                                                                                        
 
