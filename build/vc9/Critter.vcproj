@@ -41,7 +41,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="..\source;$(NXOGRE_DIR)\SDK;$(OGRE_HOME)\include;$(OGRE_HOME)\include\OGRE;$(OGRE_HOME)\boost_1_42"
-				PreprocessorDefinitions="WIN32;CRITTER_SDK;CRITTER_STATIC_LIBRARY"
+				PreprocessorDefinitions="WIN32;CRITTER_SDK;CRITTER_STATIC_LIBRARY;WIN32"
+				RuntimeLibrary="2"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -101,7 +102,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="..\source;$(NXOGRE_DIR)\SDK;$(OGRE_HOME)\include;$(OGRE_HOME)\include\OGRE;$(OGRE_HOME)\boost_1_42"
-				PreprocessorDefinitions="WIN32;CRITTER_SDK;CRITTER_STATIC_LIBRARY"
+				PreprocessorDefinitions="WIN32;_LIB;CRITTER_SDK;CRITTER_STATIC_LIBRARY"
+				RuntimeLibrary="3"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -114,9 +116,9 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				AdditionalDependencies=""
+				AdditionalDependencies="OgreMain_d.lib NxOgreDebug.lib"
 				OutputFile="$(OutDir)\CritterDebugStatic.lib"
-				AdditionalLibraryDirectories=""
+				AdditionalLibraryDirectories="&quot;$(OGRE_HOME)\lib\debug&quot;;&quot;$(NXOGRE_DIR)\sdk\&quot;"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -172,7 +174,7 @@
 			>
 		</File>
 		<File
-			RelativePath=".\CritterKinematicBody.cpp"
+			RelativePath="..\source\CritterKinematicBody.cpp"
 			>
 		</File>
 		<File
@@ -213,6 +215,10 @@
 		</File>
 		<File
 			RelativePath="..\source\CritterStable.h"
+			>
+		</File>
+		<File
+			RelativePath="..\source\NxOgreOGRE3D.h"
 			>
 		</File>
 	</Files>

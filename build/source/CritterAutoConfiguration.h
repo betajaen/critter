@@ -88,40 +88,11 @@
 #pragma warning (disable : 4996)
 
 
-#if (CritterCompiler == CritterCompilerMSVC)
- 
- #define CritterForceInline __forceinline
- 
- #ifdef CRITTER_DYNAMIC_LIBRARY
- # define CRITTER_EXPORT_OPTIONS CRITTER_EXPORT_OPTIONS_EXPORT
- #endif
-
- #ifdef CRITTER_STATIC_LIBRARY
- # define CRITTER_EXPORT_OPTIONS CRITTER_EXPORT_OPTIONS_AVOID
- #endif
-
- #ifndef CRITTER_EXPORT_OPTIONS
- # define CRITTER_EXPORT_OPTIONS CRITTER_EXPORT_OPTIONS_IMPORT
- #endif
-
- #if (CRITTER_EXPORT_OPTIONS == CRITTER_EXPORT_OPTIONS_EXPORT)
- # define CritterPublicClass __declspec(dllexport)
- # define CritterPublicFunction __declspec(dllexport)
- #endif
-
- #if (CRITTER_EXPORT_OPTIONS == CRITTER_EXPORT_OPTIONS_IMPORT)
- # define CritterPublicClass __declspec(dllimport)
- # define CritterPublicFunction __declspec(dllimport)
- #endif
-
- #if (CRITTER_EXPORT_OPTIONS == CRITTER_EXPORT_OPTIONS_AVOID)
- # define CritterPublicClass
- # define CritterPublicFunction
- #endif
-
-#endif
-
-#if (CritterCompiler == CritterCompilerGNUC)
+#ifdef CRITTER_SDK
+# define CritterForceInline __inline
+# define CritterPublicClass
+# define CritterPublicFunction
+#else
 # define CritterForceInline __inline
 # define CritterPublicClass
 # define CritterPublicFunction
