@@ -102,7 +102,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="..\source;$(NXOGRE_DIR)\SDK;$(OGRE_HOME)\include;$(OGRE_HOME)\include\OGRE;$(OGRE_HOME)\boost_1_42"
-				PreprocessorDefinitions="WIN32;_LIB;CRITTER_SDK;CRITTER_STATIC_LIBRARY"
+				PreprocessorDefinitions="WIN32;_LIB;CRITTER_SDK;CRITTER_STATIC_LIBRARY;CRITTER_DEBUG_RESOURCES"
 				RuntimeLibrary="3"
 			/>
 			<Tool
@@ -179,6 +179,22 @@
 		</File>
 		<File
 			RelativePath="..\source\CritterKinematicBody.h"
+			>
+		</File>
+		<File
+			RelativePath="..\source\CritterOgreResource.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\source\CritterOgreResource.h"
+			>
+		</File>
+		<File
+			RelativePath="..\source\CritterOgreResourceProtocol.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\source\CritterOgreResourceProtocol.h"
 			>
 		</File>
 		<File

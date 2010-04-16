@@ -36,11 +36,14 @@
 #include "CritterCommon.h"
 #include "CritterEnums.h"
 #include "CritterKinematicBody.h"
+#include "CritterOgreResourceProtocol.h"
 #include "CritterParticleRenderable.h"
 #include "CritterPointRenderable.h"
 #include "CritterRenderable.h"
 #include "CritterRenderSystem.h"
+
 #include "CritterStable.h"
+
                                                                                        
 
 #endif

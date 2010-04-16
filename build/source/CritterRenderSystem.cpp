@@ -331,6 +331,19 @@ void RenderSystem::destroyFluid(NxOgre::Fluid* fluid)
  
 }
 
+Ogre::SceneNode* RenderSystem::createSceneNodeEntityPair(const Ogre::String& meshName, const Ogre::Vector3& vec, const Ogre::Quaternion& quat)
+{
+ Ogre::SceneNode* node = mSceneManager->getRootSceneNode()->createChildSceneNode(vec, quat);
+ node->attachObject(mSceneManager->createEntity(meshName));
+ return node;
+}
+
+Ogre::SceneNode* RenderSystem::createSceneNodeEntityPair(const NxOgre::String& meshName, const NxOgre::Vec3& vec, const NxOgre::Quat& quat)
+{
+ Ogre::SceneNode* node = mSceneManager->getRootSceneNode()->createChildSceneNode(vec.as<Ogre::Vector3>(), quat.as<Ogre::Quaternion>());
+ node->attachObject(mSceneManager->createEntity(meshName));
+ return node;
+}
 
                                                                                        
 

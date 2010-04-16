@@ -24,10 +24,8 @@
     
 */
 
-                                                                                       
-
-#ifndef CRITTER_ENUMS_H
-#define CRITTER_ENUMS_H
+#include "CritterOgreResourceProtocol.h"
+#include "CritterOgreResource.h"
 
                                                                                        
 
@@ -36,46 +34,54 @@ namespace Critter
 
                                                                                        
 
-namespace Enums
+OgreResourceProtocol::OgreResourceProtocol(void)
 {
+ mProtocolName = "ogre";
+ mProtocolHash = NxOgre::Strings::hash(mProtocolName);
+}
+
+OgreResourceProtocol::~OgreResourceProtocol(void)
+{
+}
+
+NxOgre::Resource* OgreResourceProtocol::open(const NxOgre::Path& path, NxOgre::Enums::ResourceAccess access)
+{
+ OgreResource* resource = NXOGRE_NEW_NXOGRE(OgreResource)(path, this, access);
+ addResource(resource);
+ resource->open();
+ return resource;
+}
+
+void OgreResourceProtocol::close(NxOgre::Resource* resource)
+{
+ OgreResource* oresource = static_cast<OgreResource*>(resource);
+ oresource->close();
+ removeResource(oresource); // Removing it will automatically delete it as well.
+}
+
+NxOgre::String OgreResourceProtocol::getProtocol(void) const
+{
+ return mProtocolName;
+}
+
+NxOgre::StringHash OgreResourceProtocol::getProtocolHash(void) const
+{
+ return mProtocolHash;
+}
+
+bool OgreResourceProtocol::usesNamelessResources(void) const
+{
+ return false;
+}
+
+void OgreResourceProtocol::initialise(void)
+{
+}
+
 
                                                                                        
 
-enum SceneNodeDestructorBehaviour
-{
- SceneNodeDestructorBehaviour_Destroy, //< \brief Destroy the SceneNode, it's children, and it's movable objects.
- SceneNodeDestructorBehaviour_Remove, //< \brief Remove itself from the Root SceneNode.
- SceneNodeDestructorBehaviour_Inherit //< \brief Use the behaviour as given by the class.
-};
-
-enum ClassTypes
-{
- _OgreResource          = NxOgre::Classes::RENDERSYSTEMS_CLASSES_BEGIN + 1500,
- _OgreResourceProtocol,
-
-};
-
-enum RigidBodyTypes
-{
- RigidBodyType_Body          = NxOgre::Enums::RigidBodyType_USER_BEGIN + 8371,
- RigidBodyType_KinematicBody
-};
-
-enum FluidRenderableType
-{
- FluidType_Position     = NxOgre::Enums::RenderableType_ParticlePoints,
- FluidType_Velocity     = FluidType_Position + 100,
- FluidType_OgreParticle = FluidType_Position + 101,
-};
+} // namespace
 
                                                                                        
 
-} // enums
-
-                                                                                       
-
-} // critter
-
-                                                                                       
-
-#endif

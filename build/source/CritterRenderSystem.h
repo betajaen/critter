@@ -141,6 +141,12 @@ class CritterPublicClass RenderSystem : public NxOgre::UserBigClassAllocatable, 
    */
    void destroyFluid(NxOgre::Fluid*);
 
+   /** \brief Helper function to create a Ogre SceneNode and Entity pair.
+   */
+   Ogre::SceneNode* createSceneNodeEntityPair(const Ogre::String& meshName, const Ogre::Vector3& = Ogre::Vector3::ZERO, const Ogre::Quaternion& = Ogre::Quaternion::IDENTITY);
+   Ogre::SceneNode* createSceneNodeEntityPair(const NxOgre::String& meshName, const NxOgre::Vec3& = NxOgre::Vec3::ZERO, const NxOgre::Quat& = NxOgre::Quat::IDENTITY);
+
+
 
    /** \brief Helper function for Debug Visualisation.
    */
