@@ -42,7 +42,6 @@ namespace Critter
 class KinematicBody : public NxOgre::KinematicActor, public NxOgre::TimeListener
 {
   friend class RenderSystem;
-  friend class ::NxOgre::Functions::ArrayFunctions<KinematicBody*>::Write;
   template<class T> friend inline void ::NxOgre::Functions::safe_delete(T*);
    
   public:
@@ -89,11 +88,11 @@ class KinematicBody : public NxOgre::KinematicActor, public NxOgre::TimeListener
      
   protected:
   
-     RenderSystem*                 mRenderSystem;   //< \brief Body's Rendersystem
+     RenderSystem*                       mRenderSystem;   //< \brief Body's Rendersystem
      Ogre::SceneManager*                 mSceneManager;   //< \brief Scenenode's SceneManager.
      Ogre::SceneNode*                    mNode;           //< \brief Scenenode itself..
      NxOgre::Enums::Priority             mRenderPriority; //< \brief Render priority.
-     Enums::SceneNodeDestructorBehaviour  mSceneNodeDestructorBehaviour; //< \brief Behaviour when deleting the SceneNode.
+     Enums::SceneNodeDestructorBehaviour mSceneNodeDestructorBehaviour; //< \brief Behaviour when deleting the SceneNode.
      static unsigned int                 mNextBodyID;     //< \brief Not all actors have names. So when it comes to naming
                                                           //<        nodes and entities. It will use nextBodyID as an unique
                                                           //<        name; "ogre3d-entity-1", "ogre3d-node-1".
