@@ -24,6 +24,7 @@
     
 */
 
+#include "CritterStable.h"
 #include "CritterRenderSystem.h"
 #include "CritterBody.h"
 #include "CritterBodyDescription.h"
@@ -45,14 +46,15 @@ RenderSystem::RenderSystem(NxOgre::Scene* scene, Ogre::SceneManager* sceneMgr)
 : mScene(scene), mVisualDebuggerRenderable(0), mVisualDebuggerNode(0), mVisualDebuggerShown(false), mSceneManager(sceneMgr)
 {
 
- ::NxOgre::TimeController::getSingleton()->addTimeListener(this, ::NxOgre::Enums::Priority_MediumLow);
+ mScene->addRenderListener(this, NxOgre::Enums::Priority_MediumLow);
+
 }
 
 RenderSystem::~RenderSystem(void)
 {
- 
- ::NxOgre::TimeController::getSingleton()->removeTimeListener(this, ::NxOgre::Enums::Priority_MediumLow);
- 
+
+ mScene->removeRenderListener(this, NxOgre::Enums::Priority_MediumLow);
+
  if (mVisualDebuggerRenderable)
  {
   mVisualDebuggerNode->detachObject(mVisualDebuggerRenderable);
@@ -60,9 +62,9 @@ RenderSystem::~RenderSystem(void)
   destroyRenderable(mVisualDebuggerRenderable);
  }
  
- mBodies.clear();
- mRenderables.clear();
- mPointRenderables.clear();
+ mBodies.remove_all();
+ mRenderables.remove_all();
+ mPointRenderables.remove_all();
  
 }
 
@@ -77,7 +79,7 @@ Body* RenderSystem::createBody(const NxOgre::ShapeDescription& shape, const NxOg
  if (meshName.length())
   description.mNode->attachObject(mSceneManager->createEntity(getUniqueName("entity"), meshName));
  
- Body* body = NXOGRE_NEW_NXOGRE Body(shape, pose, description, this);
+ Body* body = NxOgre::GC::safe_new4<Body>(shape, pose, description, this, NXOGRE_GC_THIS);
  
  mBodies.insert(body->getNameHash(), body);
 
@@ -91,7 +93,7 @@ Body* RenderSystem::createBody(const NxOgre::ShapeDescriptions& shapes, const Nx
  if (meshName.length())
   description.mNode->attachObject(mSceneManager->createEntity(getUniqueName("entity"), meshName));
  
- Body* body = NXOGRE_NEW_NXOGRE Body(shapes, pose, description, this);
+ Body* body = NxOgre::GC::safe_new4<Body>(shapes, pose, description, this, NXOGRE_GC_THIS);
  
  mBodies.insert(body->getNameHash(), body);
 
@@ -101,7 +103,7 @@ Body* RenderSystem::createBody(const NxOgre::ShapeDescriptions& shapes, const Nx
 Body* RenderSystem::createBody(const NxOgre::ShapeDescription& shape, const NxOgre::Matrix44& pose, BodyDescription& description)
 {
 
- Body* body = NXOGRE_NEW_NXOGRE Body(shape, pose, description, this);
+ Body* body = NxOgre::GC::safe_new4<Body>(shape, pose, description, this, NXOGRE_GC_THIS);
  mBodies.insert(body->getNameHash(), body);
 
  return body;
@@ -111,7 +113,7 @@ Body* RenderSystem::createBody(const NxOgre::ShapeDescription& shape, const NxOg
 Body* RenderSystem::createBody(const NxOgre::ShapeDescriptions& shapes, const NxOgre::Matrix44& pose, BodyDescription& description)
 {
 
- Body* body = NXOGRE_NEW_NXOGRE Body(shapes, pose, description, this);
+ Body* body = NxOgre::GC::safe_new4<Body>(shapes, pose, description, this, NXOGRE_GC_THIS);
  mBodies.insert(body->getNameHash(), body);
 
  return body;
@@ -122,17 +124,17 @@ void RenderSystem::destroyBody(Body* body)
  if (body == 0 || body->getRigidBodyType() != Enums::RigidBodyType_Body)
   return;
  
- mBodies.erase(body->getNameHash());
+ mBodies.remove(body->getNameHash(), body);
 }
 
 RenderSystem::BodyIterator RenderSystem::getBodies()
 {
- return BodyIterator(mBodies);
+ return mBodies.elements();
 }
 
 Renderable* RenderSystem::createRenderable(int type, const Ogre::String& materialName)
 {
- Renderable* renderable = NXOGRE_NEW Renderable(type);
+ Renderable* renderable = NxOgre::GC::safe_new1<Renderable>(type, NXOGRE_GC_THIS);
  renderable->setMaterial(materialName);
  mRenderables.push_back(renderable);
  return renderable;
@@ -142,7 +144,7 @@ void RenderSystem::destroyRenderable(Renderable* renderable)
 {
  if (renderable == 0)
   return;
- mRenderables.erase(renderable);
+ mRenderables.remove(mRenderables.index(renderable));
 }
 
 KinematicBody* RenderSystem::createKinematicBody(const NxOgre::ShapeDescription& shape, const NxOgre::Matrix44& pose, const Ogre::String& meshName,BodyDescription& description)
@@ -151,7 +153,7 @@ KinematicBody* RenderSystem::createKinematicBody(const NxOgre::ShapeDescription&
  if (meshName.length())
   description.mNode->attachObject(mSceneManager->createEntity(getUniqueName("entity"), meshName));
  
- KinematicBody* kb = NXOGRE_NEW_NXOGRE KinematicBody(shape, pose, description, this);
+ KinematicBody* kb = NxOgre::GC::safe_new4<KinematicBody>(shape, pose, description, this, NXOGRE_GC_THIS);
  
  mKinematicBodies.insert(kb->getNameHash(), kb);
 
@@ -163,7 +165,7 @@ void RenderSystem::destroyKinematicBody(KinematicBody* kinematicBody)
  if (kinematicBody == 0 || kinematicBody->getRigidBodyType() != Enums::RigidBodyType_KinematicBody)
   return;
  
- mKinematicBodies.erase(kinematicBody->getNameHash());
+ mKinematicBodies.remove(kinematicBody->getNameHash(), kinematicBody);
  
 }
 
@@ -186,7 +188,8 @@ void RenderSystem::setVisualisationMode(NxOgre::Enums::VisualDebugger type)
   material->getTechnique(0)->getPass(0)->setDepthBias(1);
   material->getTechnique(0)->getPass(0)->setAmbient(1,1,1);
   material->getTechnique(0)->getPass(0)->setSelfIllumination(1,1,1);
-  material->getTechnique(0)->setLightingEnabled(false);
+  material->getTechnique(0)->getPass(0)->setDiffuse(1,1,1,1);
+  material->getTechnique(0)->getPass(0)->setLightingEnabled(false);
  }
 
  if (mVisualDebuggerRenderable == 0)
@@ -216,14 +219,14 @@ bool RenderSystem::hasDebugVisualisation(void) const
 
 PointRenderable* RenderSystem::createPointRenderable(const Ogre::String& ogre_mesh_name)
 {
- PointRenderable* renderable = NXOGRE_NEW_NXOGRE PointRenderable(this, ogre_mesh_name);
+ PointRenderable* renderable = NxOgre::GC::safe_new2<PointRenderable>(this, ogre_mesh_name, NXOGRE_GC_THIS);
  mPointRenderables.push_back(renderable);
  return renderable;
 }
 
 PointRenderable* RenderSystem::createPointRenderable(Ogre::MovableObject* movable_object)
 {
- PointRenderable* renderable = NXOGRE_NEW_NXOGRE PointRenderable(this, movable_object);
+ PointRenderable* renderable = NxOgre::GC::safe_new2<PointRenderable>(this, movable_object, NXOGRE_GC_THIS);
  mPointRenderables.push_back(renderable);
  return renderable;
 }
@@ -232,7 +235,7 @@ void RenderSystem::destroyPointRenderable(PointRenderable* renderable)
 {
  if (renderable == 0)
   return;
- mPointRenderables.erase(renderable);
+ mPointRenderables.remove(mPointRenderables.index(renderable));
 }
 
 Ogre::SceneManager* RenderSystem::getSceneManager()
@@ -344,6 +347,68 @@ Ogre::SceneNode* RenderSystem::createSceneNodeEntityPair(const NxOgre::String& m
  node->attachObject(mSceneManager->createEntity(meshName));
  return node;
 }
+
+#if Critter_UsesOgreTerrain == 1
+NxOgre::SceneGeometry* RenderSystem::createTerrain(Ogre::Terrain* terrain)
+{
+ 
+ NxOgre::HeightFieldData data;
+ data.mNbColumns = terrain->getSize();
+ data.mNbRows = terrain->getSize();
+ 
+ const float normMin = -32768.0f;
+ const float normMax = 32767.0f;
+ const float minHeight = terrain->getMinHeight();
+ const float maxHeight = terrain->getMaxHeight();
+ const float heightDiff = maxHeight - minHeight;
+ const float normDiff = normMax - normMin;
+ const unsigned short size = terrain->getSize();
+
+ float* ter_data = terrain->getHeightData();
+ 
+ NxOgre::HeightFieldSample sample;
+ 
+ sample.mMaterial0 = 0;
+ sample.mMaterial1 = 0;
+ sample.mTessellationFlag = NxOgre::Enums::HeightFieldTesselation_NW_SE;
+ 
+ NxOgre_DebugPrint_HeightFields("Attempting to sample data from heightfield, size = " << size);
+ 
+ data.mSamples.resize(size * size);
+ 
+ for(int x = 0; x < size; ++x)
+ {
+  sample.mTessellationFlag = NxOgre::Enums::HeightFieldTesselation_NW_SE;
+  for(int z = size-1; z >= 0; --z)
+  {
+   float height = ter_data[(size * z) + x];
+   sample.mHeight = (short) ( ( (height - minHeight) / heightDiff) * normDiff + normMin);
+   data.mSamples.push_back(sample);
+   sample.mTessellationFlag = !sample.mTessellationFlag;
+  }
+ }
+ 
+ NxOgre_DebugPrint_HeightFields("Attempting to cook heightfield from Ogre terrain");
+ NxOgre::HeightField* hf = data.cookQuickly();
+ 
+ const float hf_size = float(terrain->getWorldSize()) + (float(terrain->getWorldSize()) / float(size));
+ const float hf_height = (maxHeight - minHeight) / 2.0f;
+ NxOgre::Vec3 pose(terrain->getPosition());
+ pose.x -= float(size) / 2.0f;
+ pose.y += (maxHeight + minHeight) / 2.0f;
+ pose.z -= float(size) / 2.0f;
+ 
+ NxOgre::HeightFieldGeometryDescription hf_desc;
+ hf_desc.mHeightField = hf;
+ hf_desc.mLocalPose.set(pose);
+ hf_desc.mDimensions.set(hf_size, hf_height, hf_size);
+
+
+ NxOgre_DebugPrint_HeightFields("Attempting to create scene geometry from Ogre terrain");
+
+ return mScene->createSceneGeometry(hf_desc);
+}
+#endif
 
                                                                                        
 

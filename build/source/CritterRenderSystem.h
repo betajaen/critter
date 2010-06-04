@@ -42,22 +42,22 @@ namespace Critter
 class CritterPublicClass RenderSystem : public NxOgre::UserBigClassAllocatable, public NxOgre::TimeListener
 {
  public:
- 
-   typedef NxOgre::ptr_multihashmap<Body> Bodies;
 
-   typedef NxOgre::ptr_multihashmap<Body>::iterator_t BodyIterator;
+   typedef NxOgre::multihashmap<Body*, NxOgre::GC::HasGarbageCollection> Bodies;
 
-   typedef NxOgre::ptr_multihashmap<KinematicBody> KinematicBodies;
+   typedef NxOgre::multihashmap_iterator<Body*> BodyIterator;
 
-   typedef NxOgre::ptr_multihashmap<KinematicBody>::iterator_t KinematicBodyIterator;
+   typedef NxOgre::multihashmap<KinematicBody*> KinematicBodies;
 
-   typedef NxOgre::ptr_vector<Renderable> Renderables;
+   typedef NxOgre::multihashmap_iterator<KinematicBody*> KinematicBodyIterator;
 
-   typedef NxOgre::ptr_vector<Renderable>::iterator_t RenderableIterator;
+   typedef NxOgre::vector<Renderable*> Renderables;
 
-   typedef NxOgre::ptr_vector<PointRenderable> PointRenderables;
+   typedef NxOgre::vector_iterator<Renderable*> RenderableIterator;
 
-   typedef NxOgre::ptr_vector<PointRenderable>::iterator_t PointRenderableIterator;
+   typedef NxOgre::vector<PointRenderable*> PointRenderables;
+
+   typedef NxOgre::vector_iterator<PointRenderable*> PointRenderableIterator;
 
    RenderSystem(NxOgre::Scene*, Ogre::SceneManager* = ::Ogre::Root::getSingletonPtr()->getSceneManagerIterator().getNext());
 
@@ -146,7 +146,12 @@ class CritterPublicClass RenderSystem : public NxOgre::UserBigClassAllocatable, 
    Ogre::SceneNode* createSceneNodeEntityPair(const Ogre::String& meshName, const Ogre::Vector3& = Ogre::Vector3::ZERO, const Ogre::Quaternion& = Ogre::Quaternion::IDENTITY);
    Ogre::SceneNode* createSceneNodeEntityPair(const NxOgre::String& meshName, const NxOgre::Vec3& = NxOgre::Vec3::ZERO, const NxOgre::Quat& = NxOgre::Quat::IDENTITY);
 
-
+#if Critter_UsesOgreTerrain == 1
+   /*! function. Create Terrain from the Ogre 1.7 terrain system.
+      
+   */
+   NxOgre::SceneGeometry* createTerrain(Ogre::Terrain*);
+#endif
 
    /** \brief Helper function for Debug Visualisation.
    */

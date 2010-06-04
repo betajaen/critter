@@ -81,15 +81,15 @@ class CritterPublicClass Renderable  : public NxOgre::Renderable, public Ogre::S
           
      /** \brief Text
 */
-     void drawSoftBodySimple(NxOgre::PhysXMeshData*, const NxOgre::Bounds3&);
+     void drawSoftBodySimple(NxOgre::MeshRenderable*, const NxOgre::Bounds3&);
      
      /** \brief Text
 */
-     void drawCloth(NxOgre::PhysXMeshData*, NxOgre::Buffer<float>& textureCoords, const NxOgre::Bounds3&);
+     void drawCloth(NxOgre::MeshRenderable*, const NxOgre::Bounds3&);
      
      /** \brief Text
 */
-     void drawClothFast(NxOgre::PhysXMeshData*, const NxOgre::Bounds3&);
+     void drawClothFast(NxOgre::MeshRenderable*, const NxOgre::Bounds3&);
      
      /** \brief Text
 */
@@ -139,6 +139,15 @@ class CritterPublicClass Renderable  : public NxOgre::Renderable, public Ogre::S
      
      //
      Ogre::HardwareIndexBufferSharedPtr mIndexBuffer;
+    
+  private:
+     
+     inline void _autoResize(NxOgre::MeshRenderable*);
+     inline void _writeVertices(NxOgre::MeshRenderable*);
+     inline void _writeNormals(NxOgre::MeshRenderable*);
+     inline void _writeTextureCoords(NxOgre::MeshRenderable*);
+     inline void _writeIndexes(NxOgre::MeshRenderable*);
+     inline void _setBounds(const NxOgre::Bounds3&);
      
 }; // class
 

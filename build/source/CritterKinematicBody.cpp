@@ -24,6 +24,7 @@
     
 */
 
+#include "CritterStable.h"
 #include "CritterKinematicBody.h"
 #include "CritterRenderSystem.h"
 #include "CritterBodyDescription.h"
@@ -49,7 +50,7 @@ KinematicBody::KinematicBody(const NxOgre::ShapeDescription& shape, const NxOgre
  // Implement the prototype (it's being casted back into a RigidBodyPrototype) so it's treated
  // as a normal RigidBody. 
  
- createDynamic(pose, description, rendersystem->getScene(), shape);
+ createKinematic(pose, description, rendersystem->getScene(), shape);
  
  // Since NxOgre doesn't know or care about our Ogre stuff, we copy it over. This is the correct time to create
  // or turn on things related to the KinematicBody.
@@ -58,14 +59,16 @@ KinematicBody::KinematicBody(const NxOgre::ShapeDescription& shape, const NxOgre
  
  mNode = description.mNode;
  
- // And let the time controller, that this is a timelistener that needs to be listened.
- NxOgre::TimeController::getSingleton()->addTimeListener(this, mRenderPriority);
+ // And let the Scene know we want this renderered. So it will call the advance function when it's 
+ // time to render.
+ mScene->addRenderListener(this, mRenderPriority);
 }
 
 KinematicBody::~KinematicBody()
 {
  
- NxOgre::TimeController::getSingleton()->removeTimeListener(this, mRenderPriority);
+ // Stop NxOgre calling the advance function in the future, otherwise bad things would happen.
+ mScene->removeRenderListener(this, mRenderPriority);
  
  // In here, we would clean up any rendering stuff.
  _destructNode(mSceneNodeDestructorBehaviour);

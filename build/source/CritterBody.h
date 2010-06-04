@@ -57,8 +57,10 @@ class CritterPublicClass Body : public NxOgre::Actor, public NxOgre::TimeListene
  
   
   friend class RenderSystem;
-  template<class T> friend inline void ::NxOgre::Functions::safe_delete(T*);
-   
+  
+  NXOGRE_GC_FRIEND_NEW4
+  NXOGRE_GC_FRIEND_DELETE
+  
  public:
    
    /** \brief Returns "RigidBodyType_Body" as the type of RigidBody.
@@ -93,11 +95,11 @@ class CritterPublicClass Body : public NxOgre::Actor, public NxOgre::TimeListene
    
    /** \internal. Use RenderSystem::createBody
 */
-   Body(const NxOgre::ShapeDescription&, const NxOgre::Matrix44& pose, BodyDescription&, RenderSystem*);
+   Body(const NxOgre::ShapeDescription&, const NxOgre::Matrix44& pose, const BodyDescription&, RenderSystem*);
      
    /** \internal. Use RenderSystem::createBody
 */
-   Body(const NxOgre::ShapeDescriptions&, const NxOgre::Matrix44& pose, BodyDescription&, RenderSystem*);
+   Body(const NxOgre::ShapeDescriptions&, const NxOgre::Matrix44& pose, const BodyDescription&, RenderSystem*);
    
    /** \internal. Use RenderSystem::destroyBody
 */

@@ -101,9 +101,15 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalOptions="/Zm140"
 				AdditionalIncludeDirectories="..\source;$(NXOGRE_DIR)\SDK;$(OGRE_HOME)\include;$(OGRE_HOME)\include\OGRE;$(OGRE_HOME)\boost_1_42"
 				PreprocessorDefinitions="WIN32;_LIB;CRITTER_SDK;CRITTER_STATIC_LIBRARY;CRITTER_DEBUG_RESOURCES"
+				MinimalRebuild="true"
 				RuntimeLibrary="3"
+				UsePrecompiledHeader="2"
+				PrecompiledHeaderThrough="CritterStable.h"
+				WarningLevel="2"
+				DebugInformationFormat="4"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -150,6 +156,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\source\CritterBatchBodyGroup.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\source\CritterBatchBodyGroup.h"
+			>
+		</File>
+		<File
 			RelativePath="..\source\CritterBody.cpp"
 			>
 		</File>
@@ -170,6 +184,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\source\CritterConfiguration.h"
+			>
+		</File>
+		<File
 			RelativePath="..\source\CritterEnums.h"
 			>
 		</File>
@@ -179,6 +197,14 @@
 		</File>
 		<File
 			RelativePath="..\source\CritterKinematicBody.h"
+			>
+		</File>
+		<File
+			RelativePath="..\source\CritterMeshFunctions.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\source\CritterMeshFunctions.h"
 			>
 		</File>
 		<File
@@ -230,7 +256,27 @@
 			>
 		</File>
 		<File
+			RelativePath="..\source\CritterStable.cpp"
+			>
+			<FileConfiguration
+				Name="DebugStatic|Win32"
+				>
+				<Tool
+					Name="VCCLCompilerTool"
+					UsePrecompiledHeader="1"
+				/>
+			</FileConfiguration>
+		</File>
+		<File
 			RelativePath="..\source\CritterStable.h"
+			>
+		</File>
+		<File
+			RelativePath="..\source\CritterTerrainDescription.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\source\CritterTerrainDescription.h"
 			>
 		</File>
 		<File

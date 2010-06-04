@@ -39,14 +39,12 @@
 namespace Critter
 {
 
-class CritterPublicClass PointRenderable : NxOgre::UserExtendedClassAllocatable, public NxOgre::PointRenderable
+class CritterPublicClass PointRenderable : public NxOgre::UserExtendedClassAllocatable, public NxOgre::PointRenderable
 {
-   
-  friend class RenderSystem;
-   
-  public:
-     
-     
+  
+  NXOGRE_GC_FRIEND_NEW2
+  NXOGRE_GC_FRIEND_DELETE
+  
   public:
      
      

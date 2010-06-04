@@ -24,6 +24,7 @@
     
 */
 
+#include "CritterStable.h"
 #include "CritterBody.h"
 #include "CritterRenderSystem.h"
 #include "CritterBodyDescription.h"
@@ -35,7 +36,7 @@ namespace Critter
 
                                                                                        
 
-Body::Body(const NxOgre::ShapeDescription& shape, const NxOgre::Matrix44& pose, BodyDescription& description, RenderSystem* rendersystem)
+Body::Body(const NxOgre::ShapeDescription& shape, const NxOgre::Matrix44& pose, const BodyDescription& description, RenderSystem* rendersystem)
 : Actor(rendersystem->getScene()), // Take notice of the constructor we are using, it's designed for
                                    // classes that inherit from Actor. 
  mSceneNodeDestructorBehaviour(description.mSceneNodeDestructorBehaviour),
@@ -50,12 +51,14 @@ Body::Body(const NxOgre::ShapeDescription& shape, const NxOgre::Matrix44& pose, 
  // Obviously NxOgre won't know about the Ogre bits, so this is what the next lines are for:
  mSceneManager = rendersystem->getSceneManager();
  mNode = description.mNode;
+ 
+ // And let the Scene know we want this renderered. So it will call the advance function when it's 
+ // time to render.
+ mScene->addRenderListener(this, mRenderPriority);
 
- // And let the time controller know about it. So it will call the advance function every frame.
- NxOgre::TimeController::getSingleton()->addTimeListener(this, mRenderPriority);
 }
 
-Body::Body(const NxOgre::ShapeDescriptions& shapes, const NxOgre::Matrix44& pose, BodyDescription& description, RenderSystem* rendersystem)
+Body::Body(const NxOgre::ShapeDescriptions& shapes, const NxOgre::Matrix44& pose, const BodyDescription& description, RenderSystem* rendersystem)
 : Actor(rendersystem->getScene()), // Take notice of the constructor we are using, it's designed for
                                    // classes that inherit from Actor. 
  mSceneNodeDestructorBehaviour(description.mSceneNodeDestructorBehaviour),
@@ -72,18 +75,18 @@ Body::Body(const NxOgre::ShapeDescriptions& shapes, const NxOgre::Matrix44& pose
  mSceneManager = rendersystem->getSceneManager();
  mNode = description.mNode;
 
- // And let the time controller know about it. So it will call the advance function every frame.
- NxOgre::TimeController::getSingleton()->addTimeListener(this, mRenderPriority);
+ // And let the Scene know we want this renderered. So it will call the advance function when it's 
+ // time to render.
+ mScene->addRenderListener(this, mRenderPriority);
+
 }
 
 Body::~Body()
 {
  
- std::cout << "\n\n\nBody Destructor\n\n\n\n";
- 
  // Stop NxOgre calling the advance function in the future, otherwise bad things would happen.
- NxOgre::TimeController::getSingleton()->removeTimeListener(this, mRenderPriority);
- 
+ mScene->removeRenderListener(this, mRenderPriority);
+
  // In here, we would clean up any rendering stuff, and things that Actor couldn't possiblty know about.
  _destructNode(mSceneNodeDestructorBehaviour);
  

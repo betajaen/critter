@@ -24,12 +24,14 @@
     
 */
 
+
                                                                                        
 
 #ifndef CRITTER_PARTICLERENDERABLE_H
 #define CRITTER_PARTICLERENDERABLE_H
 
 #include "CritterStable.h"
+#if NxOgreHasFluids == 1
 #include "CritterCommon.h"
 
                                                                                        
@@ -46,9 +48,9 @@ class CritterPublicClass ParticleRenderable : public NxOgre::UserExtendedClassAl
     
   public:
      
-     void  drawSoftBodySimple(NxOgre::PhysXMeshData*, const NxOgre::Bounds3&) {}
-     void  drawCloth(NxOgre::PhysXMeshData*, NxOgre::Buffer<float>& textureCoords, const NxOgre::Bounds3&) {}
-     void  drawClothFast(NxOgre::PhysXMeshData*, const NxOgre::Bounds3&) {}
+     void  drawSoftBodySimple(NxOgre::MeshRenderable*, const NxOgre::Bounds3&) {}
+     void  drawCloth(NxOgre::MeshRenderable*, const NxOgre::Bounds3&) {}
+     void  drawClothFast(NxOgre::MeshRenderable*, const NxOgre::Bounds3&) {}
      void  drawVisualDebugger(NxOgre::VisualDebuggerMeshData*) {}
      
      /** \brief Text
@@ -105,8 +107,10 @@ class CritterPublicClass ParticleRenderable : public NxOgre::UserExtendedClassAl
 
 
 
-} // namespace
+} // namespace Critter
 
                                                                                        
+
+#endif
 
 #endif

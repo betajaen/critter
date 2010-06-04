@@ -1,0 +1,25 @@
+h1. Ogre to Detritus/Critter names.
+
+Names and classes equivalents.
+
+|*Ogre*|*NxOgre*|
+|Root|World|
+|SceneManager|Scene, Critter::RenderSystem|
+|SceneNode (Moves around)|Body|
+|SceneNode (Stays still)|StaticGeometry|
+|Entity|ShapeDescription (BoxDescription, SphereDescription, etc.) --> Shape(Box, Sphere, etc.) |
+|FrameListener|TimeListener|
+|FrameEvent|TimeStep|
+|Vector3|Vec3|
+|Quaternion|Quat|
+|Matrix44|Matrix44|
+|Matrix34|Matrix34|
+|Particle|Fluid and Critter::PointRenderable|
+|ResourceGroup|ResourceSystem|
+|Resource|Resource|
+|Mesh|MeshManager/Mesh|
+|Terrain|HeightFieldManager/HeightField --> HeightFieldGeometryDescrition --> HeightFieldGeometry|
+|ManualObject|ManualMesh|
+|".mesh.xml" file|".flower" file|
+|".mesh" file|".nxs" file|
+|OgreXMLConverter|Flour|

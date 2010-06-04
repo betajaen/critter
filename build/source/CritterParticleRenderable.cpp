@@ -24,7 +24,9 @@
     
 */
 
+#include "CritterStable.h"
 #include "CritterParticleRenderable.h"
+#if NxOgreHasFluids == 1
 #include "CritterRenderSystem.h"
 
                                                                                        
@@ -67,7 +69,7 @@ void ParticleRenderable::initialise(NxOgre::Fluid* fluid)
    mFluid->getMaxParticles() * 2);
  mNode->attachObject(mParticleSystem);
  
- mParticleSystem->setDefaultDimensions(0.2, 0.2);
+ mParticleSystem->setDefaultDimensions(0.2f, 0.2f);
  mParticleSystem->setMaterialName(mMaterialName);
  mParticleSystem->setParticleQuota(mFluid->getMaxParticles());
  mParticleSystem->setSpeedFactor(0.0f);
@@ -76,7 +78,6 @@ void ParticleRenderable::initialise(NxOgre::Fluid* fluid)
 
 void ParticleRenderable::drawFluid(NxOgre::PhysXParticleData* data, const NxOgre::Bounds3& bounds)
 {
- 
  if (data->getNbParticles() > mParticleSystem->getNumParticles())
  {
    unsigned int newParticleCount = data->getNbParticles() - mParticleSystem->getNumParticles();
@@ -142,6 +143,8 @@ Ogre::ParticleSystem* ParticleRenderable::getParticleSystem()
 
                                                                                        
 
-} // namespace
+} // namespace Critter
 
                                                                                        
+
+#endif

@@ -25,7 +25,7 @@
 */
 
 #include "CritterStable.h"
-#include "CritterBodyDescription.h"
+#include "CritterTerrainDescription.h"
 
                                                                                        
 
@@ -34,44 +34,25 @@ namespace Critter
 
                                                                                        
 
-BodyDescription::BodyDescription(void)
+TerrainDescription::TerrainDescription(void)
 {
  reset();
 }
 
-BodyDescription::~BodyDescription(void)
+TerrainDescription::~TerrainDescription(void)
 {
  // Nothing to do in here.
 }
 
-void BodyDescription::reset(void)
+void TerrainDescription::reset(void)
 {
-
- // Reset the physics bits.
- RigidBodyDescription::reset();
-
- // Reset the visual bits.
- mNode = 0;
- mSceneNodeDestructorBehaviour = Enums::SceneNodeDestructorBehaviour_Destroy;
- mRenderPriority = NxOgre::Enums::Priority_Medium;
-
+ mMaterialRanges.clear();
 }
 
-bool BodyDescription::valid(void)
+bool TerrainDescription::valid(void)
 {
 
- // Check to see if the physics bits are valid or not.
- if (!RigidBodyDescription::valid())
-  return false;
 
- // If there is an entity; there must be a node.
- if (mNode == 0)
-  return false;
- 
- // SceneNodeDestructorBehaviour can't be inherit.
- if (mSceneNodeDestructorBehaviour == Enums::SceneNodeDestructorBehaviour_Inherit)
-  return false;
- 
  // If we reached here then everything is okay.
  return true;
 }

@@ -41,9 +41,10 @@ namespace Critter
 
 class KinematicBody : public NxOgre::KinematicActor, public NxOgre::TimeListener
 {
-  friend class RenderSystem;
-  template<class T> friend inline void ::NxOgre::Functions::safe_delete(T*);
-   
+  
+  NXOGRE_GC_FRIEND_NEW4
+  NXOGRE_GC_FRIEND_DELETE
+  
   public:
     
    /** \brief

@@ -32,9 +32,14 @@
 
                                                                                        
 
+#include "CritterConfiguration.h"
 #include "CritterAutoConfiguration.h"
 #include "NxOgre.h"
 #include "OGRE/Ogre.h"
+
+#if Critter_UsesOgreTerrain == 1
+#include "OGRE/Terrain/OgreTerrain.h"
+#endif
 
                                                                                        
 

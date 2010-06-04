@@ -1,3 +1,4 @@
+
 /** 
     
     This file is part of Critter.
@@ -25,7 +26,11 @@
 */
 
 #include "CritterStable.h"
-#include "CritterBodyDescription.h"
+#include "CritterBatchBodyGroup.h"
+
+#if 0
+#include "CritterRenderSystem.h"
+#include "CritterMeshFunctions.h"
 
                                                                                        
 
@@ -34,46 +39,44 @@ namespace Critter
 
                                                                                        
 
-BodyDescription::BodyDescription(void)
+BatchBodyGroup::BatchBodyGroup(const NxOgre::ShapeDescription& shape, Ogre::MeshPtr mesh, const NxOgre::RigidBodyDescription& description, RenderSystem* rendersystem)
+: mRenderSystem(rendersystem), mMeshData(0)
 {
- reset();
+ description.copy_into(&mRigidBodyDescription);
+ mMeshData = Critter::MeshFunctions::read(mesh);
+ mShapeDescriptions.push_back(shape.duplicate());
+ mNode = mRenderSystem->getSceneManager()->createSceneNode();
 }
 
-BodyDescription::~BodyDescription(void)
+BatchBodyGroup::BatchBodyGroup(const NxOgre::ShapeDescriptions& shapes, Ogre::MeshPtr mesh, const NxOgre::RigidBodyDescription& description, RenderSystem* rendersystem)
+: mRenderSystem(rendersystem), mMeshData(0)
 {
- // Nothing to do in here.
+ description.copy_into(&mRigidBodyDescription);
+ mMeshData = Critter::MeshFunctions::read(mesh);
+ for (NxOgre::ShapeDescriptions::const_iterator shape = shapes.begin(); shape != shapes.end();++shape)
+  mShapeDescriptions.push_back((*shape)->duplicate());
+ mNode = mRenderSystem->getSceneManager()->createSceneNode();
 }
 
-void BodyDescription::reset(void)
+BatchBodyGroup::~BatchBodyGroup(void)
 {
-
- // Reset the physics bits.
- RigidBodyDescription::reset();
-
- // Reset the visual bits.
- mNode = 0;
- mSceneNodeDestructorBehaviour = Enums::SceneNodeDestructorBehaviour_Destroy;
- mRenderPriority = NxOgre::Enums::Priority_Medium;
-
-}
-
-bool BodyDescription::valid(void)
-{
-
- // Check to see if the physics bits are valid or not.
- if (!RigidBodyDescription::valid())
-  return false;
-
- // If there is an entity; there must be a node.
- if (mNode == 0)
-  return false;
  
- // SceneNodeDestructorBehaviour can't be inherit.
- if (mSceneNodeDestructorBehaviour == Enums::SceneNodeDestructorBehaviour_Inherit)
-  return false;
+ mNode->detachAllObjects();
+ mNode->getParentSceneNode()->removeChild(mNode);
+ mRenderSystem->getSceneManager()->destroySceneNode(mNode);
  
- // If we reached here then everything is okay.
- return true;
+ NxOgre::Vectors::safe_erase(mShapeDescriptions);
+ NXOGRE_DELETE_NXOGRE(mMeshData);
+}
+
+BatchBody::BatchBody(NxOgre::ShapeDescriptions& shapes, NxOgre::RigidBodyDescription& description, NxOgre::Matrix44 globalPose, NxOgre::Scene* scene)
+: NxOgre::Actor(scene)
+{
+ createDynamic(globalPose, description, scene, shapes);
+}
+
+BatchBody::~BatchBody()
+{ // Actor destructor will destroy the RigidBody
 }
 
                                                                                        
@@ -82,3 +85,4 @@ bool BodyDescription::valid(void)
 
                                                                                        
 
+#endif

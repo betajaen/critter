@@ -24,6 +24,7 @@
     
 */
 
+#include "CritterStable.h"
 #include "CritterRenderable.h"
 
                                                                                        
@@ -42,6 +43,8 @@ Critter::Renderable::RenderProfile  Critter::Renderable::NXOGRE_PARTICLE_VELOCIT
 
 Critter::Renderable::RenderProfile  Critter::Renderable::NXOGRE_SOFTBODY =
                   Critter::Renderable::RenderProfile (Ogre::RenderOperation::OT_TRIANGLE_LIST, false, false, true, false, false);
+
+#define ABORT_IF_EMPTY if (renderable->vertices.count() < 3) { mBox.setExtents(Ogre::Vector3::ZERO, Ogre::Vector3::ZERO); return; }
 
                                                                                        
 
@@ -79,122 +82,163 @@ Renderable::Renderable(int type)
 
 Renderable::~Renderable()
 {
- NXOGRE_DELETE(mRenderOp.vertexData);
- NXOGRE_DELETE(mRenderOp.indexData);
+ 
+ if (mRenderOp.vertexData)
+  delete mRenderOp.vertexData;
+ 
+ if (mRenderOp.indexData)
+  delete mRenderOp.indexData;
+ 
 }
 
-void Renderable::drawSoftBodySimple(NxOgre::PhysXMeshData* data, const NxOgre::Bounds3& bounds)
+void Renderable::_autoResize(NxOgre::MeshRenderable* renderable)
+{
+ _resize(renderable->vertices.capacity(), renderable->indexes.count());
+}
+
+void Renderable::_writeVertices(NxOgre::MeshRenderable* renderable)
+{
+ mVertexBuffer->writeData(
+   0,
+   renderable->vertices.bytes(),
+   renderable->vertices.vertices()
+ );
+}
+
+void Renderable::_writeNormals(NxOgre::MeshRenderable* renderable)
+{
+ mNormalBuffer->writeData(
+   0,
+   renderable->vertices.bytes(),
+   renderable->normals.normals()
+ );
+}
+
+void Renderable::_writeTextureCoords(NxOgre::MeshRenderable* renderable)
+{
+ if (renderable->texture_coordinates.capacity())
+ {
+  //std::cout << "Texture Coords: " << renderable->texture_coordinates.capacity() << "\n";
+  mTextureCoordsBuffer->writeData(
+   0,
+   renderable->texture_coordinates.capacity() * sizeof(float),
+   renderable->texture_coordinates.texture_coords()
+  );
+ }
+}
+
+void Renderable::_writeIndexes(NxOgre::MeshRenderable* renderable)
+{
+ mRenderOp.indexData
+   ->indexBuffer
+     ->writeData(
+          0,
+          renderable->indexes.bytes(),
+          renderable->indexes.indexes()
+ );
+}
+
+void Renderable::_setBounds(const NxOgre::Bounds3& bounds)
+{
+ mBox.setExtents(bounds.min.as<Ogre::Vector3>(), bounds.max.as<Ogre::Vector3>());
+}
+
+void Renderable::drawSoftBodySimple(NxOgre::MeshRenderable* renderable, const NxOgre::Bounds3& bounds)
 {
  // Early escape.
- if (data->getNbVertices() < 3)
- {
-  mBox.setExtents(Ogre::Vector3::ZERO, Ogre::Vector3::ZERO);
-  return;
- }
+ ABORT_IF_EMPTY
  
  // Resize buffers if necessary.
- _resize(data->getNbVertices(), data->getNbIndices());
+ _autoResize(renderable);
  
  // Write the vertices.
- mVertexBuffer->writeData(0, 3 * data->getNbVertices() * sizeof(float), data->getVertices() );
+ _writeVertices(renderable);
  
  // Write the indices.
- mRenderOp.indexData->indexBuffer->writeData(0, data->getNbIndices() * sizeof(unsigned int), data->getIndices() );
+ _writeIndexes(renderable);
  
  // Set the extents.
- mBox.setExtents(bounds.min.as<Ogre::Vector3>(), bounds.max.as<Ogre::Vector3>());
+ _setBounds(bounds);
  
  // Done.
 }
 
-void Renderable::drawCloth(NxOgre::PhysXMeshData* data, NxOgre::Buffer<float>& textureCoords, const NxOgre::Bounds3& bounds)
+void Renderable::drawCloth(NxOgre::MeshRenderable* renderable,  const NxOgre::Bounds3& bounds)
 {
+ 
  // Early escape.
- if (data->getNbVertices() < 3)
- {
-  mBox.setExtents(Ogre::Vector3::ZERO, Ogre::Vector3::ZERO);
-  return;
- }
+ ABORT_IF_EMPTY
  
- // Resize buffers if necessary.
- _resize(data->getNbVertices(), data->getNbIndices());
+ _autoResize(renderable);
  
- // Write the vertices.
- mVertexBuffer->writeData(0, 3 * data->getNbVertices() * sizeof(float), data->getVertices() );
+ _writeVertices(renderable);
+ _writeNormals(renderable);
+ _writeTextureCoords(renderable);
+ _writeIndexes(renderable);
  
- // Write the normals.
- mNormalBuffer->writeData(0, 3 * data->getNbVertices() * sizeof(float), data->getNormals() );
-
- // Write the texture coords.
- mTextureCoordsBuffer->writeData(0, textureCoords.size() * sizeof(float), textureCoords.first() );
-
- // Write the indices.
- mRenderOp.indexData->indexBuffer->writeData(0, data->getNbIndices() * sizeof(unsigned int), data->getIndices() );
- 
- // Set the extents.
- mBox.setExtents(bounds.min.as<Ogre::Vector3>(), bounds.max.as<Ogre::Vector3>());
+ _setBounds(bounds);
  
  // Done.
 }
 
-void Renderable::drawClothFast(NxOgre::PhysXMeshData* data, const NxOgre::Bounds3& bounds)
+void Renderable::drawClothFast(NxOgre::MeshRenderable* renderable, const NxOgre::Bounds3& bounds)
 {
  
  // Resize buffers if necessary.
- _resize(data->getNbVertices(), data->getNbIndices());
+ _autoResize(renderable);
 
  // Write the vertices.
- mVertexBuffer->writeData(0, 3 * data->getNbVertices() * sizeof(float), data->getVertices() );
+ _writeVertices(renderable);
  
  // Write the normals.
- mNormalBuffer->writeData(0, 3 * data->getNbVertices() * sizeof(float), data->getNormals() );
+ _writeNormals(renderable);
 
  // Set the extents.
- mBox.setExtents(bounds.min.as<Ogre::Vector3>(), bounds.max.as<Ogre::Vector3>());
+ _setBounds(bounds);
  
  // Done.
 }
-void Renderable::drawVisualDebugger(NxOgre::VisualDebuggerMeshData* data)
+void Renderable::drawVisualDebugger(NxOgre::VisualDebuggerMeshData* renderable)
 {
- _resize(data->getNbLines() * 2, 0);
+ _resize(renderable->getNbLines() * 2, 0);
 
  // Write the vertices.
- mVertexBuffer->writeData(0, 3 * data->getNbLines() * 2 * sizeof(float), data->getLines() );
+ mVertexBuffer->writeData(0, 3 * renderable->getNbLines() * 2 * sizeof(float), renderable->getLines() );
 
- mVertexColourBuffer->writeData(0, data->getNbLines() * 2 * sizeof(unsigned int), data->getColours() );
+ mVertexColourBuffer->writeData(0, renderable->getNbLines() * 2 * sizeof(unsigned int), renderable->getColours() );
 
  mBox.setInfinite();
  
 }
 
-void Renderable::drawFluid(NxOgre::PhysXParticleData* data, const NxOgre::Bounds3& bounds)
+void Renderable::drawFluid(NxOgre::PhysXParticleData* renderable, const NxOgre::Bounds3& bounds)
 {
   
  if (mType == Enums::FluidType_Position)
  {
   
   // Resize buffers if necessary.
-  _resize( data->getNbParticles(), 0);
+  _resize( renderable->getNbParticles(), 0);
   
   // Write the particle positions.
-  mVertexBuffer->writeData(0, 3 * data->getNbParticles() * sizeof(float), data->getPositions());
+  mVertexBuffer->writeData(0, 3 * renderable->getNbParticles() * sizeof(float), renderable->getPositions());
   
  }
  else if (mType == Enums::FluidType_Velocity)
  {
   
   // Resize buffers if necessary.
-  _resize(data->getNbParticles() * 2, 0);
+  _resize(renderable->getNbParticles() * 2, 0);
   
   NxOgre::Vec3 a, b, v, p;
   float d = 0.016f;
   
   float *prPos = static_cast<float*>(mVertexBuffer->lock(Ogre::HardwareBuffer::HBL_DISCARD));
   
-  float* positions = data->getPositions();
-  float* velocities = data->getVelocities();
+  float* positions = renderable->getPositions();
+  float* velocities = renderable->getVelocities();
   
-  for (unsigned int i=0; i < data->getNbParticles() * 3; i+=3)
+  for (unsigned int i=0; i < renderable->getNbParticles() * 3; i+=3)
   {
    p.x = positions[i];
    p.y = positions[i+1];
@@ -281,8 +325,9 @@ void Renderable::_initialise()
 
  // Do the indexes. If it has one.
  if (mRenderOp.useIndexes = mProfile.usesIndexes)
+ {
   mRenderOp.indexData = new Ogre::IndexData;
-
+ }
 
  mIndexBufferCapacity = 0;
 }
@@ -320,6 +365,8 @@ void Renderable::_resize(size_t vertexCount, size_t indexCount)
         mRenderOp.vertexData->vertexDeclaration->getVertexSize(VertexDeclaration_Position),
         mVertexBufferCapacity,
         Ogre::HardwareBuffer::HBU_DYNAMIC_WRITE_ONLY); // TODO: Custom HBU_?
+    
+    std::cout << "Verts: " << mVertexBufferCapacity << "/" << vertexCount << std::endl;
     
     // Bind buffer
     mRenderOp.vertexData->vertexBufferBinding->setBinding(VertexDeclaration_Position, mVertexBuffer);
@@ -397,9 +444,14 @@ void Renderable::_resize(size_t vertexCount, size_t indexCount)
       // Create new index buffer
       mIndexBuffer = mRenderOp.indexData->indexBuffer =
         Ogre::HardwareBufferManager::getSingleton().createIndexBuffer(
-          Ogre::HardwareIndexBuffer::IndexType(!mProfile.uses16BitIndexes),
+          Ogre::HardwareIndexBuffer::IT_32BIT, //Ogre::HardwareIndexBuffer::IndexType(!mProfile.uses16BitIndexes),
           mIndexBufferCapacity,
           Ogre::HardwareBuffer::HBU_DYNAMIC_WRITE_ONLY); // TODO: Custom HBU_?
+ 
+// DEBUG
+     std::cout << "Tris: " << mIndexBufferCapacity << "/" << indexCount << std::endl;
+// END
+ 
     }
     
     // Update index count in the render operation
@@ -422,7 +474,7 @@ float Renderable::getSquaredViewDepth(const Ogre::Camera* cam) const
  return vDist.squaredLength();
 }
 
-
+#undef ABORT_IF_EMPTY
 
                                                                                        
 

@@ -24,6 +24,7 @@
     
 */
 
+#include "CritterStable.h"
 #include "CritterOgreResourceProtocol.h"
 #include "CritterOgreResource.h"
 
@@ -46,7 +47,7 @@ OgreResourceProtocol::~OgreResourceProtocol(void)
 
 NxOgre::Resource* OgreResourceProtocol::open(const NxOgre::Path& path, NxOgre::Enums::ResourceAccess access)
 {
- OgreResource* resource = NXOGRE_NEW_NXOGRE(OgreResource)(path, this, access);
+ OgreResource* resource = NxOgre::GC::safe_new3<OgreResource>(path, this, access, NXOGRE_GC_THIS);
  addResource(resource);
  resource->open();
  return resource;
@@ -54,9 +55,9 @@ NxOgre::Resource* OgreResourceProtocol::open(const NxOgre::Path& path, NxOgre::E
 
 void OgreResourceProtocol::close(NxOgre::Resource* resource)
 {
- OgreResource* oresource = static_cast<OgreResource*>(resource);
- oresource->close();
- removeResource(oresource); // Removing it will automatically delete it as well.
+ OgreResource* ogre_resource = static_cast<OgreResource*>(resource);
+ ogre_resource->close();
+ removeResource(ogre_resource); // Removing it will automatically delete it as well.
 }
 
 NxOgre::String OgreResourceProtocol::getProtocol(void) const

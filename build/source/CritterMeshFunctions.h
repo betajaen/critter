@@ -24,61 +24,28 @@
     
 */
 
+                                                                                       
+
+#ifndef CRITTER_MESHFUNCTIONS_H
+#define CRITTER_MESHFUNCTIONS_H
+
 #include "CritterStable.h"
-#include "CritterBodyDescription.h"
+#include "CritterCommon.h"
 
                                                                                        
 
 namespace Critter
 {
 
-                                                                                       
-
-BodyDescription::BodyDescription(void)
+struct MeshFunctions
 {
- reset();
-}
-
-BodyDescription::~BodyDescription(void)
-{
- // Nothing to do in here.
-}
-
-void BodyDescription::reset(void)
-{
-
- // Reset the physics bits.
- RigidBodyDescription::reset();
-
- // Reset the visual bits.
- mNode = 0;
- mSceneNodeDestructorBehaviour = Enums::SceneNodeDestructorBehaviour_Destroy;
- mRenderPriority = NxOgre::Enums::Priority_Medium;
-
-}
-
-bool BodyDescription::valid(void)
-{
-
- // Check to see if the physics bits are valid or not.
- if (!RigidBodyDescription::valid())
-  return false;
-
- // If there is an entity; there must be a node.
- if (mNode == 0)
-  return false;
  
- // SceneNodeDestructorBehaviour can't be inherit.
- if (mSceneNodeDestructorBehaviour == Enums::SceneNodeDestructorBehaviour_Inherit)
-  return false;
+ static NxOgre::MeshData* read(Ogre::MeshPtr);
  
- // If we reached here then everything is okay.
- return true;
-}
+};
+
+} // namespace
 
                                                                                        
 
-}
-
-                                                                                       
-
+#endif

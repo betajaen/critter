@@ -24,6 +24,7 @@
     
 */
 
+#include "CritterStable.h"
 #include "CritterPointRenderable.h"
 
 #include "CritterRenderSystem.h"
@@ -114,6 +115,11 @@ Ogre::Entity* PointRenderable::fetchEntity(const Ogre::String& name)
  return entity;
 }
 
+Ogre::SceneNode* PointRenderable::getNode()
+{
+ return mNode;
+}
+
 void PointRenderable::parseMovableObject(Ogre::MovableObject* mo)
 {
  if (mo == 0)
@@ -121,13 +127,6 @@ void PointRenderable::parseMovableObject(Ogre::MovableObject* mo)
 
  if (mo->isAttached())
   mo->getParentSceneNode()->detachObject(mo);
-}
-
-
-void PointRenderable::addSceneNode(Ogre::SceneNode*)
-{
-
-
 }
 
 void PointRenderable::addSceneNode(const Ogre::String& name)

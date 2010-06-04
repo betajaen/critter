@@ -29,6 +29,8 @@
 #ifndef CRITTER_AUTOCONFIGURATION_H
 #define CRITTER_AUTOCONFIGURATION_H
 
+#include "NxOgreConfiguration.h"
+
 #define CritterMemoryAllocatorMalloc 1
 #define CritterMemoryAllocatorNedmalloc 2
 
@@ -102,6 +104,15 @@
 # ifndef CRITTER_DEBUG
 #  define CRITTER_DEBUG
 # endif
+#endif
+
+
+#ifdef Critter_UsesOgreTerrain
+ #ifdef CRITTER_DEBUG
+  # pragma comment(lib, "OgreTerrain_d.lib")
+ #else
+  # pragma comment(lib, "OgreTerrain.lib")
+ #endif
 #endif
 
 #endif
