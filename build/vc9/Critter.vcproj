@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="..\source;$(NXOGRE_DIR)\SDK;$(OGRE_HOME)\include;$(OGRE_HOME)\include\OGRE;$(OGRE_HOME)\boost_1_42"
-				PreprocessorDefinitions="WIN32;CRITTER_SDK;CRITTER_STATIC_LIBRARY;WIN32"
+				PreprocessorDefinitions="WIN32;_LIB;CRITTER_SDK;CRITTER_STATIC_LIBRARY"
 				RuntimeLibrary="2"
 			/>
 			<Tool
@@ -55,9 +55,9 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				AdditionalDependencies=""
-				OutputFile="$(OutDir)\CritterFinalStatic.lib"
-				AdditionalLibraryDirectories=""
+				AdditionalDependencies="OgreMain.lib NxOgre.lib"
+				OutputFile="$(OutDir)\CritterStatic.lib"
+				AdditionalLibraryDirectories="&quot;$(OGRE_HOME)\lib\release&quot;;&quot;$(NXOGRE_DIR)\sdk\&quot;"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -103,7 +103,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/Zm140"
 				AdditionalIncludeDirectories="..\source;$(NXOGRE_DIR)\SDK;$(OGRE_HOME)\include;$(OGRE_HOME)\include\OGRE;$(OGRE_HOME)\boost_1_42"
-				PreprocessorDefinitions="WIN32;_LIB;CRITTER_SDK;CRITTER_STATIC_LIBRARY;CRITTER_DEBUG_RESOURCES"
+				PreprocessorDefinitions="WIN32;_LIB;CRITTER_SDK;CRITTER_STATIC_LIBRARY"
 				MinimalRebuild="true"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="2"
