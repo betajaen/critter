@@ -44,19 +44,19 @@ class CritterPublicClass TerrainDescription : public NxOgre::RigidBodyDescriptio
 
   /** \brief OGRE3DPrototype constructor
   */
-  TerrainDescription(void);
+  TerrainDescription();
 
   /** \brief OGRE3DPrototype destructor
   */
- ~TerrainDescription(void);
+ ~TerrainDescription();
 
   /** \brief Reset the RigidBodyPrototype and OGRE3D bits to it's default state.
   */
-  void reset(void);
+  void reset();
 
   /** \brief Does the prototype's variables are in the range of acceptable values?
   */
-  bool valid(void);
+  bool valid();
 
   /*! variable. Enable Smooth Sphere Collisions on the Terrain
   */

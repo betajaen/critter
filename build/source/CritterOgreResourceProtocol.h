@@ -98,7 +98,7 @@ class CritterPublicClass OgreResourceProtocol : public NxOgre::ResourceProtocol
       desc.
           Required initialise function
   */
-  void  initialise(void);
+  void  initialise();
   
   protected: // Variables
   

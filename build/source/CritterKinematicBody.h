@@ -71,7 +71,7 @@ class KinematicBody : public NxOgre::KinematicActor, public NxOgre::TimeListener
   
     /** \brief "Drawing" function, called by the TimeListener.
     */
-   bool                advance(float, const NxOgre::Enums::Priority&);
+   bool                advance(float, const NxOgre::Enums::Priority&, const NxOgre::Enums::SceneFunction&);
 
   protected:
   
@@ -79,9 +79,13 @@ class KinematicBody : public NxOgre::KinematicActor, public NxOgre::TimeListener
      */
      KinematicBody(const NxOgre::ShapeDescription&, const NxOgre::Matrix44& pose, const BodyDescription&, RenderSystem*);
      
+     /** \internal. Use RenderSystem::createBody
+     */
+     KinematicBody(const NxOgre::ShapeDescriptions&, const NxOgre::Matrix44& pose, const BodyDescription&, RenderSystem*);
+     
      /** \internal. Use RenderSystem::destroyBody
      */
-    ~KinematicBody(void);
+    ~KinematicBody();
      
      /** \brief
      */

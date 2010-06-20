@@ -77,7 +77,7 @@ class CritterPublicClass Renderable  : public NxOgre::Renderable, public Ogre::S
      
      /** \brief
 */
-    ~Renderable(void);
+    ~Renderable();
           
      /** \brief Text
 */
@@ -101,7 +101,7 @@ class CritterPublicClass Renderable  : public NxOgre::Renderable, public Ogre::S
      
      /** \brief Text
 */
-     Ogre::Real getBoundingRadius(void) const;
+     Ogre::Real getBoundingRadius() const;
      
      /** \brief
 */

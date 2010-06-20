@@ -459,7 +459,7 @@ void Renderable::_resize(size_t vertexCount, size_t indexCount)
   }
 }
 
-float Renderable::getBoundingRadius(void) const
+float Renderable::getBoundingRadius() const
 {
  return Ogre::Math::Sqrt(std::max(mBox.getMaximum().squaredLength(), mBox.getMinimum().squaredLength()));
 }

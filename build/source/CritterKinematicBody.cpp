@@ -50,7 +50,33 @@ KinematicBody::KinematicBody(const NxOgre::ShapeDescription& shape, const NxOgre
  // Implement the prototype (it's being casted back into a RigidBodyPrototype) so it's treated
  // as a normal RigidBody. 
  
- createKinematic(pose, description, rendersystem->getScene(), shape);
+ createKinematic(pose, description, shape);
+ 
+ // Since NxOgre doesn't know or care about our Ogre stuff, we copy it over. This is the correct time to create
+ // or turn on things related to the KinematicBody.
+ 
+ mSceneManager = rendersystem->getSceneManager();
+ 
+ mNode = description.mNode;
+ 
+ // And let the Scene know we want this renderered. So it will call the advance function when it's 
+ // time to render.
+ mScene->addRenderListener(this, mRenderPriority);
+}
+
+KinematicBody::KinematicBody(const NxOgre::ShapeDescriptions& shapes, const NxOgre::Matrix44& pose, const BodyDescription& description, RenderSystem* rendersystem)
+: KinematicActor(rendersystem->getScene()),
+                                   // Take notice of the constructor we are using, it's designed for
+                                   // classes that inherit from Actor. 
+ mNode(0),
+ mSceneManager(0),
+ mRenderPriority(description.mRenderPriority), 
+ mSceneNodeDestructorBehaviour(description.mSceneNodeDestructorBehaviour)
+{
+ // Implement the prototype (it's being casted back into a RigidBodyPrototype) so it's treated
+ // as a normal RigidBody. 
+ 
+ createKinematic(pose, description, shapes);
  
  // Since NxOgre doesn't know or care about our Ogre stuff, we copy it over. This is the correct time to create
  // or turn on things related to the KinematicBody.
@@ -119,7 +145,7 @@ Ogre::SceneNode* KinematicBody::getSceneNode()
  return mNode;
 }
 
-bool KinematicBody::advance(float, const NxOgre::Enums::Priority&)
+bool KinematicBody::advance(float, const NxOgre::Enums::Priority&, const NxOgre::Enums::SceneFunction&)
 {
  mNode->setPosition( getGlobalPosition().as<Ogre::Vector3>() );
  mNode->setOrientation( getGlobalOrientationQuat().as<Ogre::Quaternion>() );

@@ -44,19 +44,19 @@ class CritterPublicClass BodyDescription : public NxOgre::RigidBodyDescription
   
   /** \brief OGRE3DPrototype constructor
   */
-  BodyDescription(void);
+  BodyDescription();
   
   /** \brief OGRE3DPrototype destructor
   */
- ~BodyDescription(void);
+ ~BodyDescription();
   
   /** \brief Reset the RigidBodyPrototype and OGRE3D bits to it's default state.
   */
-  void reset(void);
+  void reset();
   
   /** \brief Does the prototype's variables are in the range of acceptable values?
   */
-  bool valid(void);
+  bool valid();
   
   /** \brief SceneNode to use, or NULL to create.
   */

@@ -44,9 +44,13 @@ Body::Body(const NxOgre::ShapeDescription& shape, const NxOgre::Matrix44& pose, 
  mRenderSystem(rendersystem)
 {
  
- // Create a dynamic RigidBody with the pose, scene and shape.
+ // Set the name and hash.
+ mName = description.mName;
+ mNameHash = NxOgre::Strings::hash(mName);
+ 
+ // Create a dynamic RigidBody with the pose, description and shape.
  // We can pass on the BodyDescription as a RigidBodyDescription because it inherits from it,
- createDynamic(pose, description, rendersystem->getScene(), shape);
+ createDynamic(pose, description, shape);
 
  // Obviously NxOgre won't know about the Ogre bits, so this is what the next lines are for:
  mSceneManager = rendersystem->getSceneManager();
@@ -66,9 +70,13 @@ Body::Body(const NxOgre::ShapeDescriptions& shapes, const NxOgre::Matrix44& pose
  mRenderSystem(rendersystem)
 {
  
- // Create a dynamic RigidBody with the pose, scene and shape.
+ // Set the name and hash.
+ mName = description.mName;
+ mNameHash = NxOgre::Strings::hash(mName);
+ 
+ // Create a dynamic RigidBody with the pose, description and shapes.
  // We can pass on the BodyDescription as a RigidBodyDescription because it inherits from it,
- createDynamic(pose, description, rendersystem->getScene(), shapes);
+ createDynamic(pose, description, shapes);
  mAlphaPose = pose;
  
  // Obviously NxOgre won't know about the Ogre bits, so this is what the next lines are for:
@@ -156,7 +164,7 @@ void Body::setSceneNodeDestructorBehaviour(Enums::SceneNodeDestructorBehaviour b
  mSceneNodeDestructorBehaviour = behaviour;
 }
 
-bool Body::advance(float step, const NxOgre::Enums::Priority&)
+bool Body::advance(float step, const NxOgre::Enums::Priority&, const NxOgre::Enums::SceneFunction&)
 {
  mNode->setPosition( getGlobalPosition().as<Ogre::Vector3>() );
  mNode->setOrientation( getGlobalOrientationQuat().as<Ogre::Quaternion>() );

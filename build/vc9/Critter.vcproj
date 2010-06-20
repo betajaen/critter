@@ -156,14 +156,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\source\CritterBatchBodyGroup.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\source\CritterBatchBodyGroup.h"
-			>
-		</File>
-		<File
 			RelativePath="..\source\CritterBody.cpp"
 			>
 		</File>

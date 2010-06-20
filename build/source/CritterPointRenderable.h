@@ -147,7 +147,7 @@ an identifier.
      
      /** \brief
 */
-    ~PointRenderable(void);
+    ~PointRenderable();
      
   protected: // functions
      

@@ -58,7 +58,8 @@ enum ClassTypes
 enum RigidBodyTypes
 {
  RigidBodyType_Body          = NxOgre::Enums::RigidBodyType_USER_BEGIN + 8371,
- RigidBodyType_KinematicBody
+ RigidBodyType_KinematicBody,
+ RigidBodyType_AnimatedCharacter
 };
 
 enum FluidRenderableType
@@ -66,6 +67,19 @@ enum FluidRenderableType
  FluidType_Position     = NxOgre::Enums::RenderableType_ParticlePoints,
  FluidType_Velocity     = FluidType_Position + 100,
  FluidType_OgreParticle = FluidType_Position + 101,
+};
+
+enum AnimatedCharacterState
+{
+ AnimatedCharacterState_Idle,
+ AnimatedCharacterState_Walk,
+ AnimatedCharacterState_Run,
+ AnimatedCharacterState_JumpBegin,
+ AnimatedCharacterState_JumpLoop,
+ AnimatedCharacterState_JumpEnd,
+ AnimatedCharacterState_FallBegin,
+ AnimatedCharacterState_FallLoop,
+ AnimatedCharacterState_FallEnd,
 };
 
                                                                                        

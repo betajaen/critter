@@ -75,7 +75,7 @@ class CritterPublicClass ParticleRenderable : public NxOgre::UserExtendedClassAl
      
      /** \brief
      */
-    ~ParticleRenderable(void);
+    ~ParticleRenderable();
      
   protected:
      

@@ -89,7 +89,7 @@ class CritterPublicClass Body : public NxOgre::Actor, public NxOgre::TimeListene
    
    /** \brief "Drawing" function, called by the TimeListener - Changes the SceneNode pose to the same one as the NxActor's.
 */
-   bool advance(float, const NxOgre::Enums::Priority&);
+   bool advance(float, const NxOgre::Enums::Priority&, const NxOgre::Enums::SceneFunction&);
    
  protected:
    
@@ -103,7 +103,7 @@ class CritterPublicClass Body : public NxOgre::Actor, public NxOgre::TimeListene
    
    /** \internal. Use RenderSystem::destroyBody
 */
-   virtual ~Body(void);
+   virtual ~Body();
    
    void _destructNode(Enums::SceneNodeDestructorBehaviour);
    

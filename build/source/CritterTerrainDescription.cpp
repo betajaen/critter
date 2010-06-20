@@ -34,22 +34,22 @@ namespace Critter
 
                                                                                        
 
-TerrainDescription::TerrainDescription(void)
+TerrainDescription::TerrainDescription()
 {
  reset();
 }
 
-TerrainDescription::~TerrainDescription(void)
+TerrainDescription::~TerrainDescription()
 {
  // Nothing to do in here.
 }
 
-void TerrainDescription::reset(void)
+void TerrainDescription::reset()
 {
  mMaterialRanges.clear();
 }
 
-bool TerrainDescription::valid(void)
+bool TerrainDescription::valid()
 {
 
 

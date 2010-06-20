@@ -47,7 +47,7 @@ class CritterPublicClass RenderSystem : public NxOgre::UserBigClassAllocatable, 
 
    typedef NxOgre::multihashmap_iterator<Body*> BodyIterator;
 
-   typedef NxOgre::multihashmap<KinematicBody*> KinematicBodies;
+   typedef NxOgre::multihashmap<KinematicBody*, NxOgre::GC::HasGarbageCollection> KinematicBodies;
 
    typedef NxOgre::multihashmap_iterator<KinematicBody*> KinematicBodyIterator;
 
@@ -61,9 +61,9 @@ class CritterPublicClass RenderSystem : public NxOgre::UserBigClassAllocatable, 
 
    RenderSystem(NxOgre::Scene*, Ogre::SceneManager* = ::Ogre::Root::getSingletonPtr()->getSceneManagerIterator().getNext());
 
-  ~RenderSystem(void);
+  ~RenderSystem();
 
-   NxOgre::Scene* getScene(void);
+   NxOgre::Scene* getScene();
 
    /** \brief Create a Body.
    */
@@ -113,6 +113,10 @@ class CritterPublicClass RenderSystem : public NxOgre::UserBigClassAllocatable, 
    */
    KinematicBody* createKinematicBody(const NxOgre::ShapeDescription&, const NxOgre::Matrix44& pose, const Ogre::String& meshName, BodyDescription& = BodyDescription());
 
+   /** \brief Create a KinematicBody, a KinematicActor as a Body.
+   */
+   KinematicBody* createKinematicBody(const NxOgre::ShapeDescriptions&, const NxOgre::Matrix44& pose, const Ogre::String& meshName, BodyDescription& = BodyDescription());
+
    /** \brief Destroy a KinematicBody.
    */
    void destroyKinematicBody(KinematicBody*);
@@ -159,11 +163,11 @@ class CritterPublicClass RenderSystem : public NxOgre::UserBigClassAllocatable, 
 
    /** \brief Is the Visual Debuggger active?
    */
-   bool hasDebugVisualisation(void) const;
+   bool hasDebugVisualisation() const;
 
    /** \internal Do not call.
    */
-   bool advance(float user_deltaTime, const NxOgre::Enums::Priority&);
+   bool advance(float user_deltaTime, const NxOgre::Enums::Priority&, const NxOgre::Enums::SceneFunction&);
 
    /** \brief
    */

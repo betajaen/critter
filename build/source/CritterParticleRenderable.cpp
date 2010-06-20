@@ -44,7 +44,7 @@ ParticleRenderable::ParticleRenderable(const Ogre::String& material, RenderSyste
 {
 }
 
-ParticleRenderable::~ParticleRenderable(void)
+ParticleRenderable::~ParticleRenderable()
 {
  
  if (mParticleSystem)

@@ -39,24 +39,24 @@ OgreResource::OgreResource(const NxOgre::Path& path, NxOgre::ResourceProtocol* p
 {
 }
 
-OgreResource::~OgreResource(void)
+OgreResource::~OgreResource()
 {
  if (mStatus == NxOgre::Enums::ResourceStatus_Opened)
   close();
 
 }
 
-NxOgre::Enums::ResourceAccess OgreResource::getAccess(void) const
+NxOgre::Enums::ResourceAccess OgreResource::getAccess() const
 {
  return mAccess;
 }
 
-NxOgre::Enums::ResourceStatus OgreResource::getStatus(void) const
+NxOgre::Enums::ResourceStatus OgreResource::getStatus() const
 {
  return mStatus;
 }
 
-NxOgre::Enums::ResourceDirectionality OgreResource::getDirectionality(void) const
+NxOgre::Enums::ResourceDirectionality OgreResource::getDirectionality() const
 {
  return mDirectionality;
 }
@@ -91,7 +91,7 @@ void OgreResource::open()
  
 }
 
-void OgreResource::close(void)
+void OgreResource::close()
 {
  mStatus = NxOgre::Enums::ResourceStatus_Closing;
  mDirectionality = NxOgre::Enums::ResourceDirectionality_Unknown;
@@ -104,7 +104,7 @@ void OgreResource::close(void)
  
 }
 
-size_t OgreResource::getSize(void) const
+size_t OgreResource::getSize() const
 {
  if (mStatus != NxOgre::Enums::ResourceStatus_Opened)
   return 0;
@@ -122,7 +122,7 @@ bool OgreResource::seek(size_t to)
  return false;
 }
 
-bool OgreResource::seekBeginning(void)
+bool OgreResource::seekBeginning()
 {
  if (mStatus == NxOgre::Enums::ResourceStatus_Opened && mDirectionality == NxOgre::Enums::ResourceDirectionality_Omidirectional)
  {
@@ -132,7 +132,7 @@ bool OgreResource::seekBeginning(void)
  return false;
 }
 
-bool OgreResource::seekEnd(void)
+bool OgreResource::seekEnd()
 {
  if (mStatus == NxOgre::Enums::ResourceStatus_Opened && mDirectionality == NxOgre::Enums::ResourceDirectionality_Omidirectional)
  {
@@ -142,7 +142,7 @@ bool OgreResource::seekEnd(void)
  return false;
 }
 
-bool OgreResource::atBeginning(void) const
+bool OgreResource::atBeginning() const
 {
  if (mStatus == NxOgre::Enums::ResourceStatus_Opened && mDirectionality == NxOgre::Enums::ResourceDirectionality_Omidirectional)
  {
@@ -151,7 +151,7 @@ bool OgreResource::atBeginning(void) const
  return false;
 }
 
-bool OgreResource::atEnd(void) const
+bool OgreResource::atEnd() const
 {
  if (mStatus == NxOgre::Enums::ResourceStatus_Opened && mDirectionality == NxOgre::Enums::ResourceDirectionality_Omidirectional)
  {
@@ -160,7 +160,7 @@ bool OgreResource::atEnd(void) const
  return false;
 }
 
-size_t OgreResource::at(void) const
+size_t OgreResource::at() const
 {
  if (mStatus == NxOgre::Enums::ResourceStatus_Opened && mDirectionality == NxOgre::Enums::ResourceDirectionality_Omidirectional)
  {
@@ -175,7 +175,7 @@ bool OgreResource::write(const void* src, size_t src_size)
  return mStream->write(src, src_size) == src_size;
 }
 
-bool OgreResource::writeNull(void)
+bool OgreResource::writeNull()
 {
  mNbWroteBytes += sizeof(char);
  return mStream->write(&NULL_BYTE, sizeof(char)) == sizeof(char);
@@ -321,7 +321,7 @@ bool OgreResource::writeString(const NxOgre::String& str)
  return mStream->write(str.data(), str.length()) == (str.length() + 1);
 }
 
-bool OgreResource::readBool(void)
+bool OgreResource::readBool()
 {
  mNbReadBytes+=sizeof(bool);
  bool t=0;mStream->read(&t, sizeof(bool));
@@ -334,7 +334,7 @@ void OgreResource::readBoolArray(bool* t, size_t length)
  mStream->read(t, sizeof(bool) * length);
 }
 
-unsigned char OgreResource::readUChar(void)
+unsigned char OgreResource::readUChar()
 {
  mNbReadBytes+=sizeof(unsigned char);
  unsigned char t=0;mStream->read(&t, sizeof(unsigned char));
@@ -347,7 +347,7 @@ void OgreResource::readUCharArray(unsigned char* t, size_t length)
  mStream->read(t, sizeof(unsigned char) * length);
 }
 
-char OgreResource::readChar(void)
+char OgreResource::readChar()
 {
  mNbReadBytes+=sizeof(char);
  char t=0;mStream->read(&t, sizeof(char));
@@ -360,7 +360,7 @@ void OgreResource::readCharArray(char* t, size_t length)
  mStream->read(t, sizeof(char) * length);
 }
 
-unsigned short OgreResource::readUShort(void)
+unsigned short OgreResource::readUShort()
 {
  mNbReadBytes+=sizeof(unsigned short);
  unsigned short t=0;mStream->read(&t, sizeof(unsigned short));
@@ -373,7 +373,7 @@ void OgreResource::readUShortArray(unsigned short* t, size_t length)
  mStream->read(t, sizeof(unsigned short) * length);
 }
 
-short OgreResource::readShort(void)
+short OgreResource::readShort()
 {
  mNbReadBytes+=sizeof(short);
  short t=0;mStream->read(&t, sizeof(short));
@@ -386,7 +386,7 @@ void OgreResource::readShortArray(short* t, size_t length)
  mStream->read(t, sizeof(short) * length);
 }
 
-unsigned int OgreResource::readUInt(void)
+unsigned int OgreResource::readUInt()
 {
  mNbReadBytes+=sizeof(unsigned int);
  unsigned int t=0;mStream->read(&t, sizeof(unsigned int));
@@ -399,7 +399,7 @@ void OgreResource::readUIntArray(unsigned int* t, size_t length)
  mStream->read(t, sizeof(unsigned int) * length);
 }
 
-int OgreResource::readInt(void)
+int OgreResource::readInt()
 {
  mNbReadBytes+=sizeof(int);
  int t=0;mStream->read(&t, sizeof(int));
@@ -412,7 +412,7 @@ void OgreResource::readIntArray(int* t, size_t length)
  mStream->read(t, sizeof(int) * length);
 }
 
-float OgreResource::readFloat(void)
+float OgreResource::readFloat()
 {
  mNbReadBytes+=sizeof(float);
  float t=0;mStream->read(&t, sizeof(float));
@@ -425,7 +425,7 @@ void OgreResource::readFloatArray(float* t, size_t length)
  mStream->read(t, sizeof(float) * length);
 }
 
-double OgreResource::readDouble(void)
+double OgreResource::readDouble()
 {
  mNbReadBytes+=sizeof(double);
  double t=0;mStream->read(&t, sizeof(double));
@@ -438,7 +438,7 @@ void OgreResource::readDoubleArray(double* t, size_t length)
  mStream->read(t, sizeof(double) * length);
 }
 
-NxOgre::Real OgreResource::readReal(void)
+NxOgre::Real OgreResource::readReal()
 {
  mNbReadBytes+=sizeof(NxOgreRealType);
  NxOgreRealType t=0;mStream->read(&t, sizeof(NxOgreRealType));
@@ -451,7 +451,7 @@ void OgreResource::readRealArray(NxOgreRealType* t, size_t length)
  mStream->read(t, sizeof(NxOgreRealType) * length);
 }
 
-long OgreResource::readLong(void)
+long OgreResource::readLong()
 {
  mNbReadBytes+=sizeof(long);
  long t=0;mStream->read(&t, sizeof(long));

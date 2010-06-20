@@ -34,17 +34,17 @@ namespace Critter
 
                                                                                        
 
-BodyDescription::BodyDescription(void)
+BodyDescription::BodyDescription()
 {
  reset();
 }
 
-BodyDescription::~BodyDescription(void)
+BodyDescription::~BodyDescription()
 {
  // Nothing to do in here.
 }
 
-void BodyDescription::reset(void)
+void BodyDescription::reset()
 {
 
  // Reset the physics bits.
@@ -57,7 +57,7 @@ void BodyDescription::reset(void)
 
 }
 
-bool BodyDescription::valid(void)
+bool BodyDescription::valid()
 {
 
  // Check to see if the physics bits are valid or not.

@@ -35,13 +35,13 @@ namespace Critter
 
                                                                                        
 
-OgreResourceProtocol::OgreResourceProtocol(void)
+OgreResourceProtocol::OgreResourceProtocol()
 {
  mProtocolName = "ogre";
  mProtocolHash = NxOgre::Strings::hash(mProtocolName);
 }
 
-OgreResourceProtocol::~OgreResourceProtocol(void)
+OgreResourceProtocol::~OgreResourceProtocol()
 {
 }
 
@@ -60,22 +60,22 @@ void OgreResourceProtocol::close(NxOgre::Resource* resource)
  removeResource(ogre_resource); // Removing it will automatically delete it as well.
 }
 
-NxOgre::String OgreResourceProtocol::getProtocol(void) const
+NxOgre::String OgreResourceProtocol::getProtocol() const
 {
  return mProtocolName;
 }
 
-NxOgre::StringHash OgreResourceProtocol::getProtocolHash(void) const
+NxOgre::StringHash OgreResourceProtocol::getProtocolHash() const
 {
  return mProtocolHash;
 }
 
-bool OgreResourceProtocol::usesNamelessResources(void) const
+bool OgreResourceProtocol::usesNamelessResources() const
 {
  return false;
 }
 
-void OgreResourceProtocol::initialise(void)
+void OgreResourceProtocol::initialise()
 {
 }
 

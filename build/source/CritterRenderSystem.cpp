@@ -50,7 +50,7 @@ RenderSystem::RenderSystem(NxOgre::Scene* scene, Ogre::SceneManager* sceneMgr)
 
 }
 
-RenderSystem::~RenderSystem(void)
+RenderSystem::~RenderSystem()
 {
 
  mScene->removeRenderListener(this, NxOgre::Enums::Priority_MediumLow);
@@ -68,7 +68,7 @@ RenderSystem::~RenderSystem(void)
  
 }
 
-NxOgre::Scene* RenderSystem::getScene(void)
+NxOgre::Scene* RenderSystem::getScene()
 {
  return mScene;
 }
@@ -160,6 +160,19 @@ KinematicBody* RenderSystem::createKinematicBody(const NxOgre::ShapeDescription&
  return kb;
 }
 
+KinematicBody* RenderSystem::createKinematicBody(const NxOgre::ShapeDescriptions& shapes, const NxOgre::Matrix44& pose, const Ogre::String& meshName,BodyDescription& description)
+{
+ description.mNode = mSceneManager->getRootSceneNode()->createChildSceneNode(NxOgre::Vec3(pose).as<Ogre::Vector3>(), NxOgre::Quat(pose).as<Ogre::Quaternion>());
+ if (meshName.length())
+  description.mNode->attachObject(mSceneManager->createEntity(getUniqueName("entity"), meshName));
+ 
+ KinematicBody* kb = NxOgre::GC::safe_new4<KinematicBody>(shapes, pose, description, this, NXOGRE_GC_THIS);
+ 
+ mKinematicBodies.insert(kb->getNameHash(), kb);
+
+ return kb;
+}
+
 void RenderSystem::destroyKinematicBody(KinematicBody* kinematicBody)
 {
  if (kinematicBody == 0 || kinematicBody->getRigidBodyType() != Enums::RigidBodyType_KinematicBody)
@@ -169,7 +182,7 @@ void RenderSystem::destroyKinematicBody(KinematicBody* kinematicBody)
  
 }
 
-bool RenderSystem::advance(float, const NxOgre::Enums::Priority&)
+bool RenderSystem::advance(float, const NxOgre::Enums::Priority&, const NxOgre::Enums::SceneFunction&)
 {
  if (mVisualDebuggerRenderable && mVisualDebuggerShown)
  {
@@ -212,7 +225,7 @@ void RenderSystem::setVisualisationMode(NxOgre::Enums::VisualDebugger type)
  
 }
 
-bool RenderSystem::hasDebugVisualisation(void) const
+bool RenderSystem::hasDebugVisualisation() const
 {
  return mVisualDebuggerRenderable && mVisualDebuggerShown;
 }

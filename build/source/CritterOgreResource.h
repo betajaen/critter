@@ -124,7 +124,7 @@ class CritterPublicClass OgreResource : public NxOgre::Resource
       return.
            **bool* -- True if the seek did happen, or false if it did not.
   */
-  bool  seekBeginning(void);
+  bool  seekBeginning();
   
   /*! function. seekEnd
       desc.
@@ -134,7 +134,7 @@ class CritterPublicClass OgreResource : public NxOgre::Resource
       return.
            **bool** -- True if the seek did happen, or false if it did not.
   */
-  bool  seekEnd(void);
+  bool  seekEnd();
   
   /*! function. atBeginning
       desc.
@@ -142,7 +142,7 @@ class CritterPublicClass OgreResource : public NxOgre::Resource
       return.
            **bool** -- If the ReadWrite pointer is at the beginning of the resource.
   */
-  bool  atBeginning(void) const;
+  bool  atBeginning() const;
   
   /*! function. atEnd
       desc.
@@ -150,7 +150,7 @@ class CritterPublicClass OgreResource : public NxOgre::Resource
       return.
            **bool** -- If the ReadWrite pointer is at the end of the resource.
   */
-  bool  atEnd(void) const;
+  bool  atEnd() const;
   
   /*! function. at
       desc.
@@ -160,7 +160,7 @@ class CritterPublicClass OgreResource : public NxOgre::Resource
       return.
            **size_t** -- Where the ReadWrite pointer is, in bytes, in relation to the beginning of the resource.
   */
-  size_t  at(void) const;
+  size_t  at() const;
   
   /*! function. write
       desc.
@@ -179,7 +179,7 @@ class CritterPublicClass OgreResource : public NxOgre::Resource
       return.
           **bool** -- If the write was sucessful or not.
   */
-  bool  writeNull(void);
+  bool  writeNull();
   
   /*! function. writeBool.0
       desc.
@@ -428,7 +428,7 @@ class CritterPublicClass OgreResource : public NxOgre::Resource
       return.
           **bool** -- The read boolean value.
   */
-  bool  readBool(void);
+  bool  readBool();
   
   /*! function. readBoolArray
       desc.
@@ -445,7 +445,7 @@ class CritterPublicClass OgreResource : public NxOgre::Resource
       return.
           **bool** -- The read unsigned char value.
   */
-  unsigned char  readUChar(void);
+  unsigned char  readUChar();
   
   /*! function. readUCharArray
       desc.
@@ -462,7 +462,7 @@ class CritterPublicClass OgreResource : public NxOgre::Resource
       return.
           **char** -- The read char value.
   */
-  char  readChar(void);
+  char  readChar();
   
   /*! function. readCharArray
       desc.
@@ -479,7 +479,7 @@ class CritterPublicClass OgreResource : public NxOgre::Resource
       return.
           **unsigned short** -- The read unsigned short value.
   */
-  unsigned short  readUShort(void);
+  unsigned short  readUShort();
   
   /*! function. readUShortArray
       desc.
@@ -496,7 +496,7 @@ class CritterPublicClass OgreResource : public NxOgre::Resource
       return.
           **Short** -- The read short value.
   */
-  short  readShort(void);
+  short  readShort();
   
   /*! function. readShortArray
       desc.
@@ -513,7 +513,7 @@ class CritterPublicClass OgreResource : public NxOgre::Resource
       return.
           **unsigned int** -- The read unsigned int value.
   */
-  unsigned int  readUInt(void);
+  unsigned int  readUInt();
   
   /*! function. readUIntArray
       desc.
@@ -547,7 +547,7 @@ class CritterPublicClass OgreResource : public NxOgre::Resource
       return.
           **int** -- The read float value.
   */
-  float  readFloat(void);
+  float  readFloat();
   
   /*! function. readFloatArray
       desc.
@@ -564,7 +564,7 @@ class CritterPublicClass OgreResource : public NxOgre::Resource
       return.
           **double** -- The read double value.
   */
-  double  readDouble(void);
+  double  readDouble();
   
   /*! function. readDoubleArray
       desc.
@@ -581,7 +581,7 @@ class CritterPublicClass OgreResource : public NxOgre::Resource
       return.
           **Real** -- The read Real value.
   */
-  NxOgre::Real  readReal(void);
+  NxOgre::Real  readReal();
   
   /*! function. readDoubleArray
       desc.
@@ -598,7 +598,7 @@ class CritterPublicClass OgreResource : public NxOgre::Resource
       return.
           **long** -- The read long value.
   */
-  long  readLong(void);
+  long  readLong();
 
   
   /*! function. readDoubleArray
