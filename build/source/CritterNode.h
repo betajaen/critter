@@ -171,6 +171,8 @@ class CritterPublicClass Node : public NxOgre::UserExtendedClassAllocatable
     
     void setAnimation(size_t section, size_t index, bool reset = false);
     
+    size_t getAnimation(size_t section) const;
+
  protected:
     
     inline Ogre::Entity* fetchEntity(const Ogre::String& name);

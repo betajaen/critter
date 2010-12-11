@@ -71,18 +71,18 @@ enum FluidRenderableType
 
 enum StockAnimationID
 {
- StockAnimationID_None,        // ++
- StockAnimationID_Idle,        // +I
- StockAnimationID_Forward,     // +F
- StockAnimationID_Backward,    // +B
- StockAnimationID_Left,        // +L
- StockAnimationID_Right,       // +R
- StockAnimationID_Up,          // +U
- StockAnimationID_Down,        // +D
- StockAnimationID_Land,        // +G
- StockAnimationID_Fall,        // +H
- StockAnimationID_Fire,        // +X
- NO_ANIMATION = -1
+ NO_ANIMATION = 0,
+ StockAnimationID_None,
+ StockAnimationID_Idle,
+ StockAnimationID_Forward,
+ StockAnimationID_Backward,
+ StockAnimationID_Left,
+ StockAnimationID_Right,
+ StockAnimationID_Up,
+ StockAnimationID_Down,
+ StockAnimationID_Land,
+ StockAnimationID_Fall,
+ StockAnimationID_Fire
 };
 
 

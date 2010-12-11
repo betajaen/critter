@@ -372,17 +372,17 @@ void Node::updateAnimations(Ogre::Real deltaTime)
 {
  for (size_t i=0;i < CRITTER_MAX_ANIMATION_SECTIONS;i++)
  {
-  
-  if (mCurrentAnimation[i] == Enums::NO_ANIMATION)
+  size_t index = mCurrentAnimation[i];
+  if (index == Enums::NO_ANIMATION)
    continue;
   
-  if (mAnimations[i].has(mCurrentAnimation[i]) == false)
+  if (mAnimations[i].has(index) == false)
   {
    mCurrentAnimation[i] = Enums::NO_ANIMATION;
    continue;
   }
   
-  mAnimations[ i ][ mCurrentAnimation[i] ].mState->addTime(deltaTime);
+  mAnimations[ i ][ index ].mState->addTime(deltaTime);
  }
 
  fadeAnimations(deltaTime);
@@ -395,7 +395,9 @@ void Node::fadeAnimations(Ogre::Real deltaTime)
  {
   for (mAnimationIterator = mAnimations[i].elements(); mAnimationIterator != mAnimationIterator.end(); mAnimationIterator++)
   {
+   
    state = &(*mAnimationIterator);
+   
    if (state->mFadeIn)
    {
     Ogre::Real w = state->mState->getWeight() + (state->mAnimation->mFadeSpeed * deltaTime);
@@ -405,21 +407,23 @@ void Node::fadeAnimations(Ogre::Real deltaTime)
      state->mFadeIn = false;
     }
     state->mState->setWeight(w);
-   }
+   } // if
    
    if (state->mFadeOut)
    {
-    Ogre::Real w = state->mState->getWeight() + (state->mAnimation->mFadeSpeed * deltaTime);
+    Ogre::Real w = state->mState->getWeight() - (state->mAnimation->mFadeSpeed * deltaTime);
     if (w <= 0.0f)
     {
      w = 0.0f;
      state->mFadeOut = false;
     }
     state->mState->setWeight(w);
-   }
+    if (state->mFadeOut == false)
+     state->mState->setEnabled(false);
+   } // if
    
-  }
- }
+  } // for
+ } // for
 }
 
 void Node::setAnimation(size_t section, size_t index, bool reset)
@@ -452,6 +456,11 @@ void Node::setAnimation(size_t section, size_t index, bool reset)
   } // if
  } // if
  
+}
+
+size_t Node::getAnimation(size_t section) const
+{
+ return mCurrentAnimation[section];
 }
 
                                                                                        
