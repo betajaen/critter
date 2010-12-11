@@ -28,6 +28,7 @@
 #include "CritterKinematicBody.h"
 #include "CritterRenderSystem.h"
 #include "CritterBodyDescription.h"
+#include "CritterNode.h"
 
                                                                                        
 
@@ -43,9 +44,7 @@ KinematicBody::KinematicBody(const NxOgre::ShapeDescription& shape, const NxOgre
                                    // Take notice of the constructor we are using, it's designed for
                                    // classes that inherit from Actor. 
  mNode(0),
- mSceneManager(0),
- mRenderPriority(description.mRenderPriority), 
- mSceneNodeDestructorBehaviour(description.mSceneNodeDestructorBehaviour)
+ mRenderPriority(description.mRenderPriority)
 {
  // Implement the prototype (it's being casted back into a RigidBodyPrototype) so it's treated
  // as a normal RigidBody. 
@@ -54,9 +53,6 @@ KinematicBody::KinematicBody(const NxOgre::ShapeDescription& shape, const NxOgre
  
  // Since NxOgre doesn't know or care about our Ogre stuff, we copy it over. This is the correct time to create
  // or turn on things related to the KinematicBody.
- 
- mSceneManager = rendersystem->getSceneManager();
- 
  mNode = description.mNode;
  
  // And let the Scene know we want this renderered. So it will call the advance function when it's 
@@ -69,19 +65,12 @@ KinematicBody::KinematicBody(const NxOgre::ShapeDescriptions& shapes, const NxOg
                                    // Take notice of the constructor we are using, it's designed for
                                    // classes that inherit from Actor. 
  mNode(0),
- mSceneManager(0),
- mRenderPriority(description.mRenderPriority), 
- mSceneNodeDestructorBehaviour(description.mSceneNodeDestructorBehaviour)
+ mRenderPriority(description.mRenderPriority)
 {
  // Implement the prototype (it's being casted back into a RigidBodyPrototype) so it's treated
  // as a normal RigidBody. 
  
  createKinematic(pose, description, shapes);
- 
- // Since NxOgre doesn't know or care about our Ogre stuff, we copy it over. This is the correct time to create
- // or turn on things related to the KinematicBody.
- 
- mSceneManager = rendersystem->getSceneManager();
  
  mNode = description.mNode;
  
@@ -97,37 +86,9 @@ KinematicBody::~KinematicBody()
  mScene->removeRenderListener(this, mRenderPriority);
  
  // In here, we would clean up any rendering stuff.
- _destructNode(mSceneNodeDestructorBehaviour);
+ NxOgre::GC::safe_delete(mNode, NXOGRE_GC_THIS);
  
  // We leave the physics stuff to the Actors destructor, including freeing the shapes.
-}
-
-void KinematicBody::_destructNode(Enums::SceneNodeDestructorBehaviour behaviour)
-{
- 
- if (behaviour == Enums::SceneNodeDestructorBehaviour_Inherit)
-  behaviour = mSceneNodeDestructorBehaviour;
- 
- if (behaviour == Enums::SceneNodeDestructorBehaviour_Destroy)
- {
-  // Remove all attachments.
-  if (mNode->numAttachedObjects())
-   mNode->detachAllObjects();
-  
-  // Destroy all child scenenodes.
-  if (mNode->numChildren())
-   mNode->removeAndDestroyAllChildren();
-  
-  // Destroy this Scene node.
-  mNode->getParentSceneNode()->removeAndDestroyChild(mNode->getName());
-  mNode = 0;
- }
- else
- {
-  mNode->getParentSceneNode()->removeChild(mNode);
-  mNode = 0;
- }
- 
 }
 
 unsigned int KinematicBody::getRigidBodyType() const
@@ -135,12 +96,7 @@ unsigned int KinematicBody::getRigidBodyType() const
  return Enums::RigidBodyType_KinematicBody;
 }
 
-Ogre::SceneManager* KinematicBody::getSceneManager()
-{
- return mSceneManager;
-}
-
-Ogre::SceneNode* KinematicBody::getSceneNode()
+Critter::Node* KinematicBody::getNode() const
 {
  return mNode;
 }

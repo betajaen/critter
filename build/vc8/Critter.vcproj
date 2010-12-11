@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="Windows-1252"?>
-<VisualStudioProject ProjectType="Visual C++" Version="9.00" Name="Critter" ProjectGUID="{45c50569-9feb-e8ac-ca69-e9664faeb81e}" Keyword="Win32Proj" TargetFrameworkVersion="131072" >
+<VisualStudioProject ProjectType="Visual C++" Version="8.00" Name="Critter" ProjectGUID="{45c50569-9feb-e8ac-ca69-e9664faeb81e}" Keyword="Win32Proj" TargetFrameworkVersion="131072" >
     <Platforms>
           <Platform Name="Win32" />
     </Platforms>

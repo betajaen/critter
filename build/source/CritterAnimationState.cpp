@@ -24,58 +24,29 @@
     
 */
 
-                                                                                       
-
-#ifndef CRITTER_BODYDESCRIPTION_H
-#define CRITTER_BODYDESCRIPTION_H
-
 #include "CritterStable.h"
-#include "CritterCommon.h"
+#include "CritterAnimationState.h"
 
                                                                                        
 
 namespace Critter
 {
 
-class CritterPublicClass BodyDescription : public NxOgre::RigidBodyDescription
-{
-  
- public:
-  
-  /** \brief OGRE3DPrototype constructor
-  */
-  BodyDescription();
-  
-  /** \brief OGRE3DPrototype destructor
-  */
- ~BodyDescription();
-  
-  /** \brief Reset the RigidBodyPrototype and OGRE3D bits to it's default state.
-  */
-  void reset();
-  
-  /** \brief Does the prototype's variables are in the range of acceptable values?
-  */
-  bool valid();
-  
-  /*! variable. mNode
-      desc.
-           *Critter* node (a wrapped class for SceneNode with extra functions) to use.
-      default.
-           NULL - Auto-Create
-  */
-  Critter::Node* mNode;
-  
-  /*! variable. mRenderPriority
-      desc.
-          Drawing priority
-  */
-  NxOgre::Enums::Priority mRenderPriority;
-  
-};
+                                                                                       
 
-} // namespace
+AnimationState::AnimationState()
+: mAnimation(0), mFadeIn(false), mFadeOut(false), mState(0)
+{
+}
+
+AnimationState::AnimationState(Animation* anim, bool fadeIn, bool fadeOut, Ogre::AnimationState* state)
+: mAnimation(anim), mFadeIn(fadeIn), mFadeOut(fadeOut), mState(state)
+{
+}
 
                                                                                        
 
-#endif
+}
+
+                                                                                       
+

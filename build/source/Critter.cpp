@@ -24,58 +24,22 @@
     
 */
 
-                                                                                       
+// This is an automatically created file. Do not alter.
+//~~ ub_begin 0a0fa79c6ff47af85612581d20a2d610
 
-#ifndef CRITTER_BODYDESCRIPTION_H
-#define CRITTER_BODYDESCRIPTION_H
+#include "CritterAnimationState.cpp"
+#include "CritterBody.cpp"
+#include "CritterBodyDescription.cpp"
+#include "CritterConfiguration.cpp"
+#include "CritterKinematicBody.cpp"
+#include "CritterMeshFunctions.cpp"
+#include "CritterNode.cpp"
+#include "CritterOgreResource.cpp"
+#include "CritterOgreResourceProtocol.cpp"
+#include "CritterParticleRenderable.cpp"
+#include "CritterRenderable.cpp"
+#include "CritterRenderSystem.cpp"
+#include "CritterStable.cpp"
+#include "CritterTerrainDescription.cpp"
 
-#include "CritterStable.h"
-#include "CritterCommon.h"
-
-                                                                                       
-
-namespace Critter
-{
-
-class CritterPublicClass BodyDescription : public NxOgre::RigidBodyDescription
-{
-  
- public:
-  
-  /** \brief OGRE3DPrototype constructor
-  */
-  BodyDescription();
-  
-  /** \brief OGRE3DPrototype destructor
-  */
- ~BodyDescription();
-  
-  /** \brief Reset the RigidBodyPrototype and OGRE3D bits to it's default state.
-  */
-  void reset();
-  
-  /** \brief Does the prototype's variables are in the range of acceptable values?
-  */
-  bool valid();
-  
-  /*! variable. mNode
-      desc.
-           *Critter* node (a wrapped class for SceneNode with extra functions) to use.
-      default.
-           NULL - Auto-Create
-  */
-  Critter::Node* mNode;
-  
-  /*! variable. mRenderPriority
-      desc.
-          Drawing priority
-  */
-  NxOgre::Enums::Priority mRenderPriority;
-  
-};
-
-} // namespace
-
-                                                                                       
-
-#endif
+//~~ ub_end

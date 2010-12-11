@@ -107,12 +107,4 @@
 #endif
 
 
-#ifdef Critter_UsesOgreTerrain
- #ifdef CRITTER_DEBUG
-  # pragma comment(lib, "OgreTerrain_d.lib")
- #else
-  # pragma comment(lib, "OgreTerrain.lib")
- #endif
-#endif
-
 #endif

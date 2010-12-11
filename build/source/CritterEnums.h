@@ -69,18 +69,22 @@ enum FluidRenderableType
  FluidType_OgreParticle = FluidType_Position + 101,
 };
 
-enum AnimatedCharacterState
+enum StockAnimationID
 {
- AnimatedCharacterState_Idle,
- AnimatedCharacterState_Walk,
- AnimatedCharacterState_Run,
- AnimatedCharacterState_JumpBegin,
- AnimatedCharacterState_JumpLoop,
- AnimatedCharacterState_JumpEnd,
- AnimatedCharacterState_FallBegin,
- AnimatedCharacterState_FallLoop,
- AnimatedCharacterState_FallEnd,
+ StockAnimationID_None,        // ++
+ StockAnimationID_Idle,        // +I
+ StockAnimationID_Forward,     // +F
+ StockAnimationID_Backward,    // +B
+ StockAnimationID_Left,        // +L
+ StockAnimationID_Right,       // +R
+ StockAnimationID_Up,          // +U
+ StockAnimationID_Down,        // +D
+ StockAnimationID_Land,        // +G
+ StockAnimationID_Fall,        // +H
+ StockAnimationID_Fire,        // +X
+ NO_ANIMATION = -1
 };
+
 
                                                                                        
 

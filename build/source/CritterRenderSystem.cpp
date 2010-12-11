@@ -28,10 +28,10 @@
 #include "CritterRenderSystem.h"
 #include "CritterBody.h"
 #include "CritterBodyDescription.h"
-#include "CritterPointRenderable.h"
 #include "CritterParticleRenderable.h"
 #include "CritterRenderable.h"
 #include "CritterKinematicBody.h"
+#include "CritterNode.h"
 
                                                                                        
 
@@ -45,9 +45,14 @@ namespace Critter
 RenderSystem::RenderSystem(NxOgre::Scene* scene, Ogre::SceneManager* sceneMgr)
 : mScene(scene), mVisualDebuggerRenderable(0), mVisualDebuggerNode(0), mVisualDebuggerShown(false), mSceneManager(sceneMgr)
 {
-
  mScene->addRenderListener(this, NxOgre::Enums::Priority_MediumLow);
-
+ 
+ 
+#if NxOgreHasCharacterController == 1
+ // Disable Group 31 and 31 collisions. (for character controllers and proxies)
+ mScene->setGroupCollisionFlag(31, 31, false);
+#endif
+ 
 }
 
 RenderSystem::~RenderSystem()
@@ -64,8 +69,8 @@ RenderSystem::~RenderSystem()
  
  mBodies.remove_all();
  mRenderables.remove_all();
- mPointRenderables.remove_all();
- 
+
+
 }
 
 NxOgre::Scene* RenderSystem::getScene()
@@ -75,9 +80,15 @@ NxOgre::Scene* RenderSystem::getScene()
 
 Body* RenderSystem::createBody(const NxOgre::ShapeDescription& shape, const NxOgre::Matrix44& pose, const Ogre::String& meshName, BodyDescription& description)
 {
- description.mNode = mSceneManager->getRootSceneNode()->createChildSceneNode(NxOgre::Vec3(pose).as<Ogre::Vector3>(), NxOgre::Quat(pose).as<Ogre::Quaternion>());
+ 
+ if (description.mNode == 0)
+  description.mNode = NxOgre::GC::safe_new2<Node>(mSceneManager, this, NXOGRE_GC_THIS);
+ 
+ description.mNode->setPosition(NxOgre::Vec3(pose).as<Ogre::Vector3>());
+ description.mNode->setOrientation(NxOgre::Quat(pose).as<Ogre::Quaternion>());
+ 
  if (meshName.length())
-  description.mNode->attachObject(mSceneManager->createEntity(getUniqueName("entity"), meshName));
+  description.mNode->createAndAttachEntity(meshName);
  
  Body* body = NxOgre::GC::safe_new4<Body>(shape, pose, description, this, NXOGRE_GC_THIS);
  
@@ -89,9 +100,15 @@ Body* RenderSystem::createBody(const NxOgre::ShapeDescription& shape, const NxOg
 
 Body* RenderSystem::createBody(const NxOgre::ShapeDescriptions& shapes, const NxOgre::Matrix44& pose, const Ogre::String& meshName, BodyDescription& description)
 {
- description.mNode = mSceneManager->getRootSceneNode()->createChildSceneNode(NxOgre::Vec3(pose).as<Ogre::Vector3>(), NxOgre::Quat(pose).as<Ogre::Quaternion>());
+ 
+ if (description.mNode == 0)
+  description.mNode = NxOgre::GC::safe_new2<Node>(mSceneManager, this, NXOGRE_GC_THIS);
+ 
+ description.mNode->setPosition(NxOgre::Vec3(pose).as<Ogre::Vector3>());
+ description.mNode->setOrientation(NxOgre::Quat(pose).as<Ogre::Quaternion>());
+ 
  if (meshName.length())
-  description.mNode->attachObject(mSceneManager->createEntity(getUniqueName("entity"), meshName));
+  description.mNode->createAndAttachEntity(meshName);
  
  Body* body = NxOgre::GC::safe_new4<Body>(shapes, pose, description, this, NXOGRE_GC_THIS);
  
@@ -102,7 +119,12 @@ Body* RenderSystem::createBody(const NxOgre::ShapeDescriptions& shapes, const Nx
 
 Body* RenderSystem::createBody(const NxOgre::ShapeDescription& shape, const NxOgre::Matrix44& pose, BodyDescription& description)
 {
-
+ if (description.mNode == 0)
+  description.mNode = NxOgre::GC::safe_new2<Node>(mSceneManager, this, NXOGRE_GC_THIS);
+ 
+ description.mNode->setPosition(NxOgre::Vec3(pose).as<Ogre::Vector3>());
+ description.mNode->setOrientation(NxOgre::Quat(pose).as<Ogre::Quaternion>());
+ 
  Body* body = NxOgre::GC::safe_new4<Body>(shape, pose, description, this, NXOGRE_GC_THIS);
  mBodies.insert(body->getNameHash(), body);
 
@@ -112,7 +134,9 @@ Body* RenderSystem::createBody(const NxOgre::ShapeDescription& shape, const NxOg
 
 Body* RenderSystem::createBody(const NxOgre::ShapeDescriptions& shapes, const NxOgre::Matrix44& pose, BodyDescription& description)
 {
-
+ if (description.mNode == 0)
+  description.mNode = NxOgre::GC::safe_new2<Node>(mSceneManager, this, NXOGRE_GC_THIS);
+ 
  Body* body = NxOgre::GC::safe_new4<Body>(shapes, pose, description, this, NXOGRE_GC_THIS);
  mBodies.insert(body->getNameHash(), body);
 
@@ -149,9 +173,15 @@ void RenderSystem::destroyRenderable(Renderable* renderable)
 
 KinematicBody* RenderSystem::createKinematicBody(const NxOgre::ShapeDescription& shape, const NxOgre::Matrix44& pose, const Ogre::String& meshName,BodyDescription& description)
 {
- description.mNode = mSceneManager->getRootSceneNode()->createChildSceneNode(NxOgre::Vec3(pose).as<Ogre::Vector3>(), NxOgre::Quat(pose).as<Ogre::Quaternion>());
+ 
+ if (description.mNode == 0)
+  description.mNode = NxOgre::GC::safe_new2<Node>(mSceneManager, this, NXOGRE_GC_THIS);
+ 
+ description.mNode->setPosition(NxOgre::Vec3(pose).as<Ogre::Vector3>());
+ description.mNode->setOrientation(NxOgre::Quat(pose).as<Ogre::Quaternion>());
+ 
  if (meshName.length())
-  description.mNode->attachObject(mSceneManager->createEntity(getUniqueName("entity"), meshName));
+  description.mNode->createAndAttachEntity(meshName);
  
  KinematicBody* kb = NxOgre::GC::safe_new4<KinematicBody>(shape, pose, description, this, NXOGRE_GC_THIS);
  
@@ -162,9 +192,15 @@ KinematicBody* RenderSystem::createKinematicBody(const NxOgre::ShapeDescription&
 
 KinematicBody* RenderSystem::createKinematicBody(const NxOgre::ShapeDescriptions& shapes, const NxOgre::Matrix44& pose, const Ogre::String& meshName,BodyDescription& description)
 {
- description.mNode = mSceneManager->getRootSceneNode()->createChildSceneNode(NxOgre::Vec3(pose).as<Ogre::Vector3>(), NxOgre::Quat(pose).as<Ogre::Quaternion>());
+ 
+ if (description.mNode == 0)
+  description.mNode = NxOgre::GC::safe_new2<Node>(mSceneManager, this, NXOGRE_GC_THIS);
+ 
+ description.mNode->setPosition(NxOgre::Vec3(pose).as<Ogre::Vector3>());
+ description.mNode->setOrientation(NxOgre::Quat(pose).as<Ogre::Quaternion>());
+ 
  if (meshName.length())
-  description.mNode->attachObject(mSceneManager->createEntity(getUniqueName("entity"), meshName));
+  description.mNode->createAndAttachEntity(meshName);
  
  KinematicBody* kb = NxOgre::GC::safe_new4<KinematicBody>(shapes, pose, description, this, NXOGRE_GC_THIS);
  
@@ -228,27 +264,6 @@ void RenderSystem::setVisualisationMode(NxOgre::Enums::VisualDebugger type)
 bool RenderSystem::hasDebugVisualisation() const
 {
  return mVisualDebuggerRenderable && mVisualDebuggerShown;
-}
-
-PointRenderable* RenderSystem::createPointRenderable(const Ogre::String& ogre_mesh_name)
-{
- PointRenderable* renderable = NxOgre::GC::safe_new2<PointRenderable>(this, ogre_mesh_name, NXOGRE_GC_THIS);
- mPointRenderables.push_back(renderable);
- return renderable;
-}
-
-PointRenderable* RenderSystem::createPointRenderable(Ogre::MovableObject* movable_object)
-{
- PointRenderable* renderable = NxOgre::GC::safe_new2<PointRenderable>(this, movable_object, NXOGRE_GC_THIS);
- mPointRenderables.push_back(renderable);
- return renderable;
-}
-
-void RenderSystem::destroyPointRenderable(PointRenderable* renderable)
-{
- if (renderable == 0)
-  return;
- mPointRenderables.remove(mPointRenderables.index(renderable));
 }
 
 Ogre::SceneManager* RenderSystem::getSceneManager()
@@ -423,6 +438,88 @@ NxOgre::SceneGeometry* RenderSystem::createTerrain(Ogre::Terrain* terrain)
 }
 #endif
 
+void RenderSystem::addAnimation(const Ogre::String& mesh_name, size_t section, size_t index, const Ogre::String& animation_name, Ogre::Real fade_speed, bool loops)
+{
+ Animation anim;
+ anim.mLoops = loops;
+ anim.mName = animation_name;
+ anim.mFadeSpeed = fade_speed;
+ addAnimation(mesh_name, section, index, anim);
+}
+
+void RenderSystem::addAnimation(const Ogre::String& mesh_name, size_t section, size_t index, const Animation& anim)
+{
+ 
+ AnimationProperties* anims = 0;
+ size_t hashed_name = NxOgre::Strings::hash(mesh_name);
+ 
+ if (mAnimations[section].has(hashed_name) == false)
+ {
+  anims = new AnimationProperties();
+  mAnimations[section].insert(hashed_name, anims);
+ }
+ else
+  anims = mAnimations[section].at(hashed_name);
+ 
+ std::cout << "$1\n";
+
+ Animation* an = 0;
+ bool isNew = false;
+ 
+ std::cout << "$2\n";
+ if (anims->has(index))
+ {
+ std::cout << "$3\n";
+  an = anims->at(index);
+ }
+ else
+ {
+ std::cout << "$3b\n";
+  an = new Animation();
+  
+ std::cout << "$3b1\n";
+  anims->insert(index, an);
+ }
+ 
+ std::cout << "$4\n";
+ an->mFadeSpeed = anim.mFadeSpeed;
+ an->mLoops = anim.mLoops;
+ an->mName = anim.mName;
+ 
+ std::cout << "$5\n";
+}
+
+void RenderSystem::removeAnimation(const Ogre::String& mesh_name, size_t section, size_t index)
+{
+}
+
+Animation* RenderSystem::getAnimation(const Ogre::String& mesh_name, size_t section, size_t index) const
+{
+ return 0;
+}
+
+void RenderSystem::getAnimations(const Ogre::String& mesh_name, size_t section, Ogre::Entity* entity, AnimationStates& states)
+{
+ AnimationProperties* anims = 0;
+ size_t hashed_name = NxOgre::Strings::hash(mesh_name);
+ if (mAnimations[section].has(hashed_name) == false)
+  return;
+ 
+ anims = mAnimations[section].at(hashed_name);
+ 
+ for (AnimationPropertyIterator it = anims->elements();it != it.end(); it++)
+ {
+  AnimationState state;
+  state.mState = entity->getAnimationState( (*it)->mName );
+  state.mAnimation = (*it);
+  state.mFadeIn = false;
+  state.mFadeOut = false;
+  
+  states.insert(it.hashed_key(), state);
+ }
+ 
+}
+
                                                                                        
 
-} // namespace
+} // namespace Critter

@@ -32,6 +32,13 @@
 
                                                                                        
 
+#include "CritterVersion.h"
+#include "NxOgreVersion.h"
+
+#if NxOgreVersion != CritterVersion
+ #error This version of Critter does not support this NxOgre version
+#endif
+
 #include "CritterConfiguration.h"
 #include "CritterAutoConfiguration.h"
 #include "NxOgre.h"

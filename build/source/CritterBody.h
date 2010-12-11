@@ -64,31 +64,15 @@ class CritterPublicClass Body : public NxOgre::Actor, public NxOgre::TimeListene
  public:
    
    /** \brief Returns "RigidBodyType_Body" as the type of RigidBody.
-*/
+   */
    virtual unsigned int getRigidBodyType() const;
    
-   /** \brief Get the SceneManager that the SceneNode is in.
-*/
-   Ogre::SceneManager* getSceneManager();
-   
    /** \brief Get the SceneNode is in, or NULL if there isn't one.
-*/
-   Ogre::SceneNode* getSceneNode();
-    
-   /** \brief Set the SceneNode to a new one
-*/
-   void setSceneNode(Ogre::SceneNode*, Enums::SceneNodeDestructorBehaviour = Enums::SceneNodeDestructorBehaviour_Inherit);
-   
-   /** \brief Get the behaviour of the Scenenode when calling setSceneNode or the destructor.
-*/
-   Enums::SceneNodeDestructorBehaviour getSceneNodeDestructorBehaviour() const;
-   
-   /** \brief Get the behaviour of the Scenenode when calling setSceneNode or the destructor.
-*/
-   void setSceneNodeDestructorBehaviour(Enums::SceneNodeDestructorBehaviour);
+   */
+   Critter::Node* getNode() const;
    
    /** \brief "Drawing" function, called by the TimeListener - Changes the SceneNode pose to the same one as the NxActor's.
-*/
+   */
    bool advance(float, const NxOgre::Enums::Priority&, const NxOgre::Enums::SceneFunction&);
    
  protected:
@@ -105,18 +89,14 @@ class CritterPublicClass Body : public NxOgre::Actor, public NxOgre::TimeListene
 */
    virtual ~Body();
    
-   void _destructNode(Enums::SceneNodeDestructorBehaviour);
-   
  protected:
      
-     RenderSystem* mRenderSystem; //< \brief Body's Rendersystem
-     Ogre::SceneManager* mSceneManager; //< \brief Scenenode's SceneManager.
-     Ogre::SceneNode* mNode; //< \brief Scenenode itself..
-     NxOgre::Enums::Priority mRenderPriority; //< \brief Render priority.
-     Enums::SceneNodeDestructorBehaviour mSceneNodeDestructorBehaviour; //< \brief Behaviour when deleting the SceneNode.
-     NxOgre::Matrix44 mAlphaPose; //< \brief Interpolation pose.
-
-
+     RenderSystem* mRenderSystem;               //< \brief Body's Rendersystem
+     Critter::Node* mNode;                      //< \brief Scenenode itself..
+     NxOgre::Enums::Priority mRenderPriority;   //< \brief Render priority.
+     NxOgre::Matrix44 mAlphaPose;               //< \brief Interpolation pose.
+   
+   
 };
 
 } // namespace

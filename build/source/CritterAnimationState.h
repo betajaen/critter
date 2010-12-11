@@ -26,8 +26,8 @@
 
                                                                                        
 
-#ifndef CRITTER_BODYDESCRIPTION_H
-#define CRITTER_BODYDESCRIPTION_H
+#ifndef CRITTER_ANIMATIONSTATE_H
+#define CRITTER_ANIMATIONSTATE_H
 
 #include "CritterStable.h"
 #include "CritterCommon.h"
@@ -37,42 +37,27 @@
 namespace Critter
 {
 
-class CritterPublicClass BodyDescription : public NxOgre::RigidBodyDescription
+struct Animation
 {
-  
- public:
-  
-  /** \brief OGRE3DPrototype constructor
-  */
-  BodyDescription();
-  
-  /** \brief OGRE3DPrototype destructor
-  */
- ~BodyDescription();
-  
-  /** \brief Reset the RigidBodyPrototype and OGRE3D bits to it's default state.
-  */
-  void reset();
-  
-  /** \brief Does the prototype's variables are in the range of acceptable values?
-  */
-  bool valid();
-  
-  /*! variable. mNode
-      desc.
-           *Critter* node (a wrapped class for SceneNode with extra functions) to use.
-      default.
-           NULL - Auto-Create
-  */
-  Critter::Node* mNode;
-  
-  /*! variable. mRenderPriority
-      desc.
-          Drawing priority
-  */
-  NxOgre::Enums::Priority mRenderPriority;
-  
+ Ogre::String  mName;
+ bool          mLoops;
+ float          mFadeSpeed;
 };
+
+struct AnimationState
+{
+ AnimationState();
+ AnimationState(Animation* anim, bool fadeIn, bool fadeOut, Ogre::AnimationState* state);
+ 
+ Animation*             mAnimation;
+ bool                   mFadeIn, mFadeOut;
+ Ogre::AnimationState*  mState;
+};
+
+
+
+typedef NxOgre::map<size_t, AnimationState> AnimationStates;
+typedef NxOgre::map_iterator<size_t, AnimationState> AnimationStateIterator;
 
 } // namespace
 

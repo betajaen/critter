@@ -31,8 +31,9 @@
 
 #include "CritterStable.h"
 #include "CritterCommon.h"
-
 #include "CritterBodyDescription.h"
+#include "CritterAnimationState.h"
+
 
                                                                                        
 
@@ -41,24 +42,29 @@ namespace Critter
 
 class CritterPublicClass RenderSystem : public NxOgre::UserBigClassAllocatable, public NxOgre::TimeListener
 {
+   
  public:
-
+   
    typedef NxOgre::multihashmap<Body*, NxOgre::GC::HasGarbageCollection> Bodies;
-
+   
    typedef NxOgre::multihashmap_iterator<Body*> BodyIterator;
-
+   
    typedef NxOgre::multihashmap<KinematicBody*, NxOgre::GC::HasGarbageCollection> KinematicBodies;
-
+   
    typedef NxOgre::multihashmap_iterator<KinematicBody*> KinematicBodyIterator;
-
+   
    typedef NxOgre::vector<Renderable*> Renderables;
-
+   
    typedef NxOgre::vector_iterator<Renderable*> RenderableIterator;
-
-   typedef NxOgre::vector<PointRenderable*> PointRenderables;
-
-   typedef NxOgre::vector_iterator<PointRenderable*> PointRenderableIterator;
-
+   
+   typedef NxOgre::hashmap<Animation*> AnimationProperties;
+   
+   typedef NxOgre::hashmap_iterator<Animation*> AnimationPropertyIterator;
+   
+   typedef NxOgre::hashmap<AnimationProperties*> MeshAnimations;
+   
+   typedef NxOgre::hashmap_iterator<AnimationProperties*> MeshAnimationIterator;
+   
    RenderSystem(NxOgre::Scene*, Ogre::SceneManager* = ::Ogre::Root::getSingletonPtr()->getSceneManagerIterator().getNext());
 
   ~RenderSystem();
@@ -96,18 +102,6 @@ class CritterPublicClass RenderSystem : public NxOgre::UserBigClassAllocatable, 
    /** \brief Destroy a Renderable.
    */
    void destroyRenderable(Renderable*);
-
-   /** \brief Create and manage a point Renderable.
-   */
-   PointRenderable* createPointRenderable(const Ogre::String& ogre_mesh_name);
-
-   /** \brief Create and manage a point Renderable.
-   */
-   PointRenderable* createPointRenderable(Ogre::MovableObject*);
-
-   /** \brief Destroy a Renderable.
-   */
-   void destroyPointRenderable(PointRenderable*);
 
    /** \brief Create a KinematicBody, a KinematicActor as a Body.
    */
@@ -156,7 +150,7 @@ class CritterPublicClass RenderSystem : public NxOgre::UserBigClassAllocatable, 
    */
    NxOgre::SceneGeometry* createTerrain(Ogre::Terrain*);
 #endif
-
+   
    /** \brief Helper function for Debug Visualisation.
    */
    void setVisualisationMode(NxOgre::Enums::VisualDebugger);
@@ -177,6 +171,26 @@ class CritterPublicClass RenderSystem : public NxOgre::UserBigClassAllocatable, 
    */
    Ogre::String getUniqueName(const Ogre::String& prefix) const;
 
+   /** \brief Create Animation Properties
+   */
+   void addAnimation(const Ogre::String& mesh_name, size_t section, size_t index, const Ogre::String& animation_name, Ogre::Real fade_speed = 5.0f, bool loops = true);
+   
+   /** \brief Create Animation Properties
+   */
+   void addAnimation(const Ogre::String& mesh_name, size_t section, size_t index, const Animation& anim);
+   
+   /** \brief Destroy Animation Properties
+   */
+   void removeAnimation(const Ogre::String& mesh_name, size_t section, size_t index);
+   
+   /** \brief Get Animation Properties
+   */
+   Animation* getAnimation(const Ogre::String& mesh_name, size_t section, size_t index) const;
+   
+   /** \brief Get Animations
+   */
+   void getAnimations(const Ogre::String& mesh_name, size_t section, Ogre::Entity*, AnimationStates&);
+   
   protected:
      
      NxOgre::Scene* mScene;
@@ -189,8 +203,6 @@ class CritterPublicClass RenderSystem : public NxOgre::UserBigClassAllocatable, 
      
      Renderables mRenderables;
      
-     PointRenderables mPointRenderables;
-     
      Renderable* mVisualDebuggerRenderable;
      
      Ogre::SceneNode* mVisualDebuggerNode;
@@ -198,7 +210,9 @@ class CritterPublicClass RenderSystem : public NxOgre::UserBigClassAllocatable, 
      bool mVisualDebuggerShown;
      
      static unsigned int mUniqueIdentifier;
-
+     
+     MeshAnimations mAnimations[CRITTER_MAX_ANIMATION_SECTIONS];
+     
 }; // class
 
 } // namespace

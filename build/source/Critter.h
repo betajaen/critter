@@ -30,20 +30,25 @@
 #define CRITTER_H
                                                                                       
 
+#include "Critter.h"
+#include "CritterAnimationState.h"
 #include "CritterAutoConfiguration.h"
 #include "CritterBody.h"
 #include "CritterBodyDescription.h"
 #include "CritterCommon.h"
+#include "CritterConfiguration.h"
 #include "CritterEnums.h"
 #include "CritterKinematicBody.h"
 #include "CritterMeshFunctions.h"
+#include "CritterNode.h"
+#include "CritterOgreResource.h"
 #include "CritterOgreResourceProtocol.h"
 #include "CritterParticleRenderable.h"
-#include "CritterPointRenderable.h"
 #include "CritterRenderable.h"
 #include "CritterRenderSystem.h"
-
 #include "CritterStable.h"
+#include "CritterTerrainDescription.h"
+#include "CritterVersion.h"
 
                                                                                        
 

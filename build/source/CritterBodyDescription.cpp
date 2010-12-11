@@ -52,26 +52,21 @@ void BodyDescription::reset()
 
  // Reset the visual bits.
  mNode = 0;
- mSceneNodeDestructorBehaviour = Enums::SceneNodeDestructorBehaviour_Destroy;
  mRenderPriority = NxOgre::Enums::Priority_Medium;
 
 }
 
 bool BodyDescription::valid()
 {
-
+ 
  // Check to see if the physics bits are valid or not.
  if (!RigidBodyDescription::valid())
   return false;
-
+  
  // If there is an entity; there must be a node.
  if (mNode == 0)
   return false;
- 
- // SceneNodeDestructorBehaviour can't be inherit.
- if (mSceneNodeDestructorBehaviour == Enums::SceneNodeDestructorBehaviour_Inherit)
-  return false;
- 
+  
  // If we reached here then everything is okay.
  return true;
 }

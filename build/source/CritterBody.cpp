@@ -28,6 +28,7 @@
 #include "CritterBody.h"
 #include "CritterRenderSystem.h"
 #include "CritterBodyDescription.h"
+#include "CritterNode.h"
 
                                                                                        
 
@@ -39,11 +40,9 @@ namespace Critter
 Body::Body(const NxOgre::ShapeDescription& shape, const NxOgre::Matrix44& pose, const BodyDescription& description, RenderSystem* rendersystem)
 : Actor(rendersystem->getScene()), // Take notice of the constructor we are using, it's designed for
                                    // classes that inherit from Actor. 
- mSceneNodeDestructorBehaviour(description.mSceneNodeDestructorBehaviour),
  mRenderPriority(description.mRenderPriority),
  mRenderSystem(rendersystem)
 {
- 
  // Set the name and hash.
  mName = description.mName;
  mNameHash = NxOgre::Strings::hash(mName);
@@ -52,24 +51,20 @@ Body::Body(const NxOgre::ShapeDescription& shape, const NxOgre::Matrix44& pose, 
  // We can pass on the BodyDescription as a RigidBodyDescription because it inherits from it,
  createDynamic(pose, description, shape);
 
- // Obviously NxOgre won't know about the Ogre bits, so this is what the next lines are for:
- mSceneManager = rendersystem->getSceneManager();
+ // Obviously NxOgre won't know about the Ogre bits, so this is what the next line is for:
  mNode = description.mNode;
- 
+
  // And let the Scene know we want this renderered. So it will call the advance function when it's 
  // time to render.
  mScene->addRenderListener(this, mRenderPriority);
-
 }
 
 Body::Body(const NxOgre::ShapeDescriptions& shapes, const NxOgre::Matrix44& pose, const BodyDescription& description, RenderSystem* rendersystem)
 : Actor(rendersystem->getScene()), // Take notice of the constructor we are using, it's designed for
                                    // classes that inherit from Actor. 
- mSceneNodeDestructorBehaviour(description.mSceneNodeDestructorBehaviour),
  mRenderPriority(description.mRenderPriority),
  mRenderSystem(rendersystem)
 {
- 
  // Set the name and hash.
  mName = description.mName;
  mNameHash = NxOgre::Strings::hash(mName);
@@ -79,58 +74,24 @@ Body::Body(const NxOgre::ShapeDescriptions& shapes, const NxOgre::Matrix44& pose
  createDynamic(pose, description, shapes);
  mAlphaPose = pose;
  
- // Obviously NxOgre won't know about the Ogre bits, so this is what the next lines are for:
- mSceneManager = rendersystem->getSceneManager();
+ // Obviously NxOgre won't know about the Ogre bits, so this is what the next line is for:
  mNode = description.mNode;
-
+ 
  // And let the Scene know we want this renderered. So it will call the advance function when it's 
  // time to render.
  mScene->addRenderListener(this, mRenderPriority);
-
 }
 
 Body::~Body()
 {
- 
  // Stop NxOgre calling the advance function in the future, otherwise bad things would happen.
  mScene->removeRenderListener(this, mRenderPriority);
 
  // In here, we would clean up any rendering stuff, and things that Actor couldn't possiblty know about.
- _destructNode(mSceneNodeDestructorBehaviour);
+ delete mNode;
  
  // As we inherit from Actor, it's destructor will be called now. Including the "destroy()" function which
  // cleans up the Physics.
-}
-
-void Body::_destructNode(Enums::SceneNodeDestructorBehaviour behaviour)
-{
- 
- if (mNode == 0)
-  return;
- 
- if (behaviour == Enums::SceneNodeDestructorBehaviour_Inherit)
-  behaviour = mSceneNodeDestructorBehaviour;
- 
- if (behaviour == Enums::SceneNodeDestructorBehaviour_Destroy)
- {
-  // Remove all attachments.
-  if (mNode->numAttachedObjects())
-   mNode->detachAllObjects();
-  
-  // Destroy all child scenenodes.
-  if (mNode->numChildren())
-   mNode->removeAndDestroyAllChildren();
-  
-  // Destroy this Scene node.
-  mNode->getParentSceneNode()->removeAndDestroyChild(mNode->getName());
-  mNode = 0;
- }
- else
- {
-  mNode->getParentSceneNode()->removeChild(mNode);
-  mNode;
- }
- 
 }
 
 unsigned int Body::getRigidBodyType() const
@@ -138,36 +99,16 @@ unsigned int Body::getRigidBodyType() const
  return Enums::RigidBodyType_Body;
 }
 
-Ogre::SceneManager* Body::getSceneManager()
-{
- return mSceneManager;
-}
-
-Ogre::SceneNode* Body::getSceneNode()
+Node* Body::getNode() const
 {
  return mNode;
 }
 
-void Body::setSceneNode(Ogre::SceneNode* node, Enums::SceneNodeDestructorBehaviour behaviour)
+bool Body::advance(float deltaTime, const NxOgre::Enums::Priority&, const NxOgre::Enums::SceneFunction&)
 {
- _destructNode(behaviour);
- mNode = node;
-}
-
-Enums::SceneNodeDestructorBehaviour Body::getSceneNodeDestructorBehaviour() const
-{
- return mSceneNodeDestructorBehaviour;
-}
-
-void Body::setSceneNodeDestructorBehaviour(Enums::SceneNodeDestructorBehaviour behaviour)
-{
- mSceneNodeDestructorBehaviour = behaviour;
-}
-
-bool Body::advance(float step, const NxOgre::Enums::Priority&, const NxOgre::Enums::SceneFunction&)
-{
- mNode->setPosition( getGlobalPosition().as<Ogre::Vector3>() );
- mNode->setOrientation( getGlobalOrientationQuat().as<Ogre::Quaternion>() );
+ mNode->setPosition( getGlobalPosition() );
+ mNode->setOrientation( getGlobalOrientationQuat() );
+ mNode->updateAnimations(deltaTime);
  return true;
 }
 

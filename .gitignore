@@ -1,0 +1,12 @@
+sdk/
+.developer
+*.developer*
+developer/
+*.nogit/
+*.nogit
+DebugStatic
+FinalStatic
+*.opensdf
+*.user
+*.suo
+*.sdf

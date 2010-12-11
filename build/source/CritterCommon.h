@@ -38,14 +38,25 @@
 
 namespace Critter
 {
+ class AnimatedCharacterBase;
+ class AnimatedCharacterDescription;
+ class AnimatedCharacterMover;
+ struct AnimatedCharacterMoverProperties;
+ struct AnimatedCharacterInput;
+ struct AnimatedCharacterInputDirection;
+ class AnimatedCharacterActivator;
+ struct AnimationState;
+ class BackgroundAnimatedCharacter;
+ class BackgroundAnimatedCharacterDescription;
  class Body;
  class BodyDescription;
  class KinematicBody;
  class KinematicBodyDescription;
+ class LeadingAnimatedCharacter;
+ class Node;
+ class ParticleRenderable;
  class RenderSystem;
  class Renderable;
- class PointRenderable;
- class ParticleRenderable;
 }
 
                                                                                        
