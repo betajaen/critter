@@ -461,36 +461,29 @@ void RenderSystem::addAnimation(const Ogre::String& mesh_name, size_t section, s
  else
   anims = mAnimations[section].at(hashed_name);
  
- std::cout << "$1\n";
-
  Animation* an = 0;
  bool isNew = false;
  
- std::cout << "$2\n";
  if (anims->has(index))
  {
- std::cout << "$3\n";
   an = anims->at(index);
  }
  else
  {
- std::cout << "$3b\n";
   an = new Animation();
   
- std::cout << "$3b1\n";
   anims->insert(index, an);
  }
  
- std::cout << "$4\n";
  an->mFadeSpeed = anim.mFadeSpeed;
  an->mLoops = anim.mLoops;
  an->mName = anim.mName;
  
- std::cout << "$5\n";
 }
 
 void RenderSystem::removeAnimation(const Ogre::String& mesh_name, size_t section, size_t index)
 {
+ 
 }
 
 Animation* RenderSystem::getAnimation(const Ogre::String& mesh_name, size_t section, size_t index) const
@@ -518,6 +511,17 @@ void RenderSystem::getAnimations(const Ogre::String& mesh_name, size_t section, 
   states.insert(it.hashed_key(), state);
  }
  
+}
+
+Node* RenderSystem::createNode()
+{
+ return new Node(mSceneManager, this);
+}
+
+void RenderSystem::destroyNode(Node* n)
+{
+ if (n)
+  delete n;
 }
 
                                                                                        

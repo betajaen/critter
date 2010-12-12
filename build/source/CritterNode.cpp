@@ -180,6 +180,11 @@ void Node::createAndAttachEntity(const Ogre::String& entity_name, const Ogre::St
  _setupAnimations();
 }
 
+void Node::setPosition(Ogre::Real x, Ogre::Real y, Ogre::Real z)
+{
+ mNode->setPosition(x,y,z);
+}
+
 void Node::setPosition(const NxOgre::Vec3& position)
 {
  mNode->setPosition(position.as<Ogre::Vector3>());
@@ -195,6 +200,11 @@ NxOgre::Vec3 Node::getPositionVec3() const
  return NxOgre::Vec3(mNode->getPosition());
 }
 
+void Node::setOrientation(Ogre::Real w, Ogre::Real x, Ogre::Real y, Ogre::Real z)
+{
+ mNode->setOrientation(w,x,y,z);
+}
+
 void Node::setOrientation(const Ogre::Quaternion& orientation)
 {
  mNode->setOrientation(orientation);
@@ -203,6 +213,21 @@ void Node::setOrientation(const Ogre::Quaternion& orientation)
 void Node::setOrientation(const NxOgre::Quat& orientation)
 {
  mNode->setOrientation(orientation.as<Ogre::Quaternion>());
+}
+
+void Node::setOrientation(Ogre::Radian angle, NxOgre::Enums::Axis axis)
+{
+ if (axis == NxOgre::Enums::X)
+  mNode->setOrientation(Ogre::Quaternion(angle, Ogre::Vector3::UNIT_X));
+ else if (axis == NxOgre::Enums::Y)
+  mNode->setOrientation(Ogre::Quaternion(angle, Ogre::Vector3::UNIT_Y));
+ else if (axis == NxOgre::Enums::Z)
+  mNode->setOrientation(Ogre::Quaternion(angle, Ogre::Vector3::UNIT_Z));
+}
+
+void Node::setOrientation(Ogre::Radian angle, const Ogre::Vector3& axis )
+{
+ mNode->setOrientation(Ogre::Quaternion(angle, axis));
 }
 
 Ogre::Quaternion Node::getOrientation() const
@@ -358,6 +383,7 @@ void Node::_setupAnimations(size_t switchTo)
  {
   mAnimations[i].remove_all();
   mCurrentAnimation[i] = Enums::NO_ANIMATION;
+  mCurrentAnimationSpeed[i] = 1.0f;
   mRenderSystem->getAnimations(meshName, i, entity, mAnimations[i]);
  }
  
@@ -382,7 +408,7 @@ void Node::updateAnimations(Ogre::Real deltaTime)
    continue;
   }
   
-  mAnimations[ i ][ index ].mState->addTime(deltaTime);
+  mAnimations[ i ][ index ].mState->addTime(deltaTime * mCurrentAnimationSpeed[i]);
  }
 
  fadeAnimations(deltaTime);
@@ -400,7 +426,7 @@ void Node::fadeAnimations(Ogre::Real deltaTime)
    
    if (state->mFadeIn)
    {
-    Ogre::Real w = state->mState->getWeight() + (state->mAnimation->mFadeSpeed * deltaTime);
+    Ogre::Real w = state->mState->getWeight() + (state->mAnimation->mFadeSpeed * deltaTime * mCurrentAnimationSpeed[i]);
     if (w >= 1.0f)
     {
      w = 1.0f;
@@ -411,7 +437,7 @@ void Node::fadeAnimations(Ogre::Real deltaTime)
    
    if (state->mFadeOut)
    {
-    Ogre::Real w = state->mState->getWeight() - (state->mAnimation->mFadeSpeed * deltaTime);
+    Ogre::Real w = state->mState->getWeight() - (state->mAnimation->mFadeSpeed * deltaTime * mCurrentAnimationSpeed[i]);
     if (w <= 0.0f)
     {
      w = 0.0f;
@@ -458,10 +484,40 @@ void Node::setAnimation(size_t section, size_t index, bool reset)
  
 }
 
-size_t Node::getAnimation(size_t section) const
+size_t Node::getCurrentAnimation(size_t section) const
 {
  return mCurrentAnimation[section];
 }
+
+Enums::AnimationStatus Node::getAnimationStatus(size_t section, size_t index) const
+{
+ 
+ const AnimationState* state = 0;
+ if (mAnimations[section].has(mCurrentAnimation[section]) == false)
+  return Enums::AnimationStatus_Disabled;
+ 
+ state = &mAnimations[section].at(index);
+ 
+ if (state->mFadeIn)
+  return Enums::AnimationStatus_FadeIn;
+ else if (state->mFadeOut)
+  return Enums::AnimationStatus_FadeOut;
+ else if (state->mState->getEnabled())
+  return Enums::AnimationStatus_Enabled;
+ return Enums::AnimationStatus_Disabled;
+ 
+}
+
+Ogre::Real Node::getCurrentAnimationSpeed(size_t section) const
+{
+ return mCurrentAnimationSpeed[section];
+}
+
+void Node::setCurrentAnimationSpeed(size_t section, Ogre::Real speed)
+{
+ mCurrentAnimationSpeed[section] = speed;
+}
+
 
                                                                                        
 

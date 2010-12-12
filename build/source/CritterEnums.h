@@ -85,6 +85,13 @@ enum StockAnimationID
  StockAnimationID_Fire
 };
 
+enum AnimationStatus
+{
+ AnimationStatus_Disabled = 0,
+ AnimationStatus_FadeOut = 1,
+ AnimationStatus_FadeIn = 2,
+ AnimationStatus_Enabled = 3
+};
 
                                                                                        
 

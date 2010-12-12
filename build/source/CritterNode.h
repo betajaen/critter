@@ -68,6 +68,8 @@ class CritterPublicClass Node : public NxOgre::UserExtendedClassAllocatable
     unsigned short numChildren() const;
 
     Ogre::SceneNode* createChildSceneNode();
+    
+    void setPosition(Ogre::Real x, Ogre::Real y, Ogre::Real z);
 
     void setPosition(const Ogre::Vector3& position);
     
@@ -76,10 +78,16 @@ class CritterPublicClass Node : public NxOgre::UserExtendedClassAllocatable
     Ogre::Vector3 getPosition() const;
 
     NxOgre::Vec3 getPositionVec3() const;
-
+    
+    void setOrientation(Ogre::Real w, Ogre::Real x, Ogre::Real y, Ogre::Real z);
+    
     void setOrientation(const Ogre::Quaternion& orientation);
 
     void setOrientation(const NxOgre::Quat& orientation);
+    
+    void setOrientation(Ogre::Radian angle, NxOgre::Enums::Axis);
+    
+    void setOrientation(Ogre::Radian angle, const Ogre::Vector3& axis );
 
     Ogre::Quaternion getOrientation() const;
 
@@ -171,8 +179,14 @@ class CritterPublicClass Node : public NxOgre::UserExtendedClassAllocatable
     
     void setAnimation(size_t section, size_t index, bool reset = false);
     
-    size_t getAnimation(size_t section) const;
-
+    size_t getCurrentAnimation(size_t section) const;
+    
+    Enums::AnimationStatus getAnimationStatus(size_t section, size_t index) const;
+    
+    Ogre::Real getCurrentAnimationSpeed(size_t section) const;
+    
+    void setCurrentAnimationSpeed(size_t section, Ogre::Real);
+    
  protected:
     
     inline Ogre::Entity* fetchEntity(const Ogre::String& name);
@@ -194,6 +208,8 @@ class CritterPublicClass Node : public NxOgre::UserExtendedClassAllocatable
     AnimationStateIterator mAnimationIterator;
 
     size_t              mCurrentAnimation[CRITTER_MAX_ANIMATION_SECTIONS];
+    
+    Ogre::Real          mCurrentAnimationSpeed[CRITTER_MAX_ANIMATION_SECTIONS];
     
   private:
     

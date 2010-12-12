@@ -191,6 +191,14 @@ class CritterPublicClass RenderSystem : public NxOgre::UserBigClassAllocatable, 
    */
    void getAnimations(const Ogre::String& mesh_name, size_t section, Ogre::Entity*, AnimationStates&);
    
+   /** \brief Create Node
+   */
+   Node* createNode();
+
+   /** \brief Delete a node.
+   */
+   void destroyNode(Node*);
+
   protected:
      
      NxOgre::Scene* mScene;
