@@ -518,6 +518,12 @@ void Node::setCurrentAnimationSpeed(size_t section, Ogre::Real speed)
  mCurrentAnimationSpeed[section] = speed;
 }
 
+bool Node::getCurrentAnimationEnded(size_t section) const
+{
+ if (mCurrentAnimation[section] == Enums::NO_ANIMATION)
+  return false;
+ return mAnimations[section].at(mCurrentAnimation[section]).mState->hasEnded();
+}
 
                                                                                        
 

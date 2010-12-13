@@ -38,26 +38,27 @@
 
 namespace Critter
 {
- class AnimatedCharacterBase;
- class AnimatedCharacterDescription;
- class AnimatedCharacterMover;
- struct AnimatedCharacterMoverProperties;
- struct AnimatedCharacterInput;
- struct AnimatedCharacterInputDirection;
- class AnimatedCharacterActivator;
+ struct Animation;
  struct AnimationState;
- class BackgroundAnimatedCharacter;
- class BackgroundAnimatedCharacterDescription;
- class Body;
- class BodyDescription;
- class KinematicBody;
- class KinematicBodyDescription;
- class LeadingAnimatedCharacter;
- class Node;
- class ParticleRenderable;
- class RenderSystem;
- class Renderable;
+ class  BackgroundCharacter;
+ class  BackgroundCharacterDescription;
+ class  Body;
+ class  BodyDescription;
+ class  CharacterBase;
+ class  KinematicBody;
+ class  KinematicBodyDescription;
+ class  Node;
+ class  ParticleRenderable;
+ class  RenderSystem;
+ class  Renderable;
+ 
+ namespace Constants
+ {
+  static const float ReciprocalOf127 = 0.00787401575f;
+ }
+ 
 }
+
 
                                                                                        
 

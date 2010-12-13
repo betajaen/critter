@@ -57,9 +57,9 @@ RenderSystem::RenderSystem(NxOgre::Scene* scene, Ogre::SceneManager* sceneMgr)
 
 RenderSystem::~RenderSystem()
 {
-
+ 
  mScene->removeRenderListener(this, NxOgre::Enums::Priority_MediumLow);
-
+ 
  if (mVisualDebuggerRenderable)
  {
   mVisualDebuggerNode->detachObject(mVisualDebuggerRenderable);
@@ -69,8 +69,11 @@ RenderSystem::~RenderSystem()
  
  mBodies.remove_all();
  mRenderables.remove_all();
-
-
+ 
+#if NxOgreHasCharacterController == 1
+ mBackgroundCharacters.remove_all();
+#endif
+ 
 }
 
 NxOgre::Scene* RenderSystem::getScene()
@@ -523,6 +526,31 @@ void RenderSystem::destroyNode(Node* n)
  if (n)
   delete n;
 }
+
+#if NxOgreHasCharacterController == 1
+
+BackgroundCharacter* RenderSystem::createBackgroundCharacter(const Ogre::Vector3& position, const Ogre::Radian& yaw, const Ogre::String& mesh_name, const BackgroundCharacterDescription& desc)
+{
+ Node* node = createNode();
+ node->createAndAttachEntity(mesh_name);
+ return createBackgroundCharacter(position, yaw, node, desc);
+}
+
+BackgroundCharacter* RenderSystem::createBackgroundCharacter(const Ogre::Vector3& position, const Ogre::Radian& yaw, Node* node, const BackgroundCharacterDescription& desc)
+{
+ BackgroundCharacter* character = NxOgre::GC::safe_new5<BackgroundCharacter>(desc, position, yaw.valueRadians(), node, this, NXOGRE_GC_THIS);
+ mBackgroundCharacters.push_back(character);
+ return character;
+}
+
+void RenderSystem::destroyBackgroundCharacter(BackgroundCharacter* character)
+{
+ if (character == 0)
+  return;
+ mBackgroundCharacters.remove(mBackgroundCharacters.index(character));
+}
+
+#endif
 
                                                                                        
 

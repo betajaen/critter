@@ -187,6 +187,8 @@ class CritterPublicClass Node : public NxOgre::UserExtendedClassAllocatable
     
     void setCurrentAnimationSpeed(size_t section, Ogre::Real);
     
+    bool getCurrentAnimationEnded(size_t section) const;
+
  protected:
     
     inline Ogre::Entity* fetchEntity(const Ogre::String& name);

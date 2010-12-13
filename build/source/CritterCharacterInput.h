@@ -26,33 +26,64 @@
 
                                                                                        
 
-#ifndef CRITTER_H
-#define CRITTER_H
-                                                                                      
+#ifndef CRITTER_CHARACTERINPUT_H
+#define CRITTER_CHARACTERINPUT_H
 
-#include "CritterAnimationState.h"
-#include "CritterAutoConfiguration.h"
-#include "CritterBackgroundCharacter.h"
-#include "CritterBackgroundCharacterDescription.h"
-#include "CritterBody.h"
-#include "CritterBodyDescription.h"
-#include "CritterCharacterBase.h"
-#include "CritterCharacterInput.h"
-#include "CritterCommon.h"
-#include "CritterConfiguration.h"
-#include "CritterEnums.h"
-#include "CritterKinematicBody.h"
-#include "CritterMeshFunctions.h"
-#include "CritterNode.h"
-#include "CritterOgreResource.h"
-#include "CritterOgreResourceProtocol.h"
-#include "CritterParticleRenderable.h"
-#include "CritterRenderable.h"
-#include "CritterRenderSystem.h"
 #include "CritterStable.h"
-#include "CritterTerrainDescription.h"
-#include "CritterVersion.h"
+
+#if NxOgreHasCharacterController == 1
+
+#include "CritterCommon.h"
 
                                                                                        
 
+namespace Critter
+{
+
+struct CharacterInput
+{
+ char forward_backward : 8;
+ char left_right : 8;
+ unsigned char up : 1;
+ unsigned char down : 1;
+ unsigned char modifiers : 6;
+ unsigned char user : 8;
+};
+
+struct CharacterInputHelper
+{
+ 
+ CharacterInputHelper();
+ 
+ void reset();
+ 
+ void forward(unsigned char = 127);
+ 
+ void forwardFractional(Ogre::Real decimal);
+ 
+ void backward(unsigned char = 127);
+ 
+ void backwardFractional(Ogre::Real decimal);
+ 
+ void left(unsigned char = 127);
+ 
+ void leftFractional(Ogre::Real decimal);
+ 
+ void right(unsigned char = 127);
+ 
+ void rightFractional(Ogre::Real decimal);
+ 
+ void up(bool = true);
+  
+ void down(bool = true);
+ 
+ CharacterInput input;
+ 
+};
+
+} // namespace
+
+                                                                                       
+
+#endif
 #endif

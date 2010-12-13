@@ -34,6 +34,10 @@
 #include "CritterBodyDescription.h"
 #include "CritterAnimationState.h"
 
+#if NxOgreHasCharacterController == 1
+#include "CritterBackgroundCharacter.h"
+#include "CritterBackgroundCharacterDescription.h"
+#endif
 
                                                                                        
 
@@ -65,6 +69,12 @@ class CritterPublicClass RenderSystem : public NxOgre::UserBigClassAllocatable, 
    
    typedef NxOgre::hashmap_iterator<AnimationProperties*> MeshAnimationIterator;
    
+#if NxOgreHasCharacterController == 1
+   typedef NxOgre::vector<BackgroundCharacter*, NxOgre::GC::HasGarbageCollection> BackgroundCharacters;
+   
+   typedef NxOgre::vector_iterator<BackgroundCharacter*> BackgroundCharacterIterator;
+#endif
+
    RenderSystem(NxOgre::Scene*, Ogre::SceneManager* = ::Ogre::Root::getSingletonPtr()->getSceneManagerIterator().getNext());
 
   ~RenderSystem();
@@ -199,6 +209,22 @@ class CritterPublicClass RenderSystem : public NxOgre::UserBigClassAllocatable, 
    */
    void destroyNode(Node*);
 
+#if NxOgreHasCharacterController == 1
+   
+   /** \brief Create a Background Character
+   */
+   BackgroundCharacter* createBackgroundCharacter(const Ogre::Vector3& position, const Ogre::Radian& yaw, const Ogre::String& mesh_name, const BackgroundCharacterDescription& = BackgroundCharacterDescription());
+   
+   /** \brief Create a Background Character
+   */
+   BackgroundCharacter* createBackgroundCharacter(const Ogre::Vector3& position, const Ogre::Radian& yaw, Node*, const BackgroundCharacterDescription& = BackgroundCharacterDescription());
+   
+   /** \brief Destroy a Background Character
+   */
+   void destroyBackgroundCharacter(BackgroundCharacter*);
+   
+#endif
+
   protected:
      
      NxOgre::Scene* mScene;
@@ -221,9 +247,13 @@ class CritterPublicClass RenderSystem : public NxOgre::UserBigClassAllocatable, 
      
      MeshAnimations mAnimations[CRITTER_MAX_ANIMATION_SECTIONS];
      
-}; // class
+#if NxOgreHasCharacterController == 1
+     BackgroundCharacters mBackgroundCharacters;
+#endif
+     
+}; // class RenderSystem
 
-} // namespace
+} // namespace Critter
 
                                                                                        
 

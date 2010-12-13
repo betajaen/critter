@@ -26,33 +26,71 @@
 
                                                                                        
 
-#ifndef CRITTER_H
-#define CRITTER_H
-                                                                                      
+#ifndef CRITTER_CHARACTERBASE_H
+#define CRITTER_CHARACTERBASE_H
 
-#include "CritterAnimationState.h"
-#include "CritterAutoConfiguration.h"
-#include "CritterBackgroundCharacter.h"
-#include "CritterBackgroundCharacterDescription.h"
-#include "CritterBody.h"
-#include "CritterBodyDescription.h"
-#include "CritterCharacterBase.h"
-#include "CritterCharacterInput.h"
-#include "CritterCommon.h"
-#include "CritterConfiguration.h"
-#include "CritterEnums.h"
-#include "CritterKinematicBody.h"
-#include "CritterMeshFunctions.h"
-#include "CritterNode.h"
-#include "CritterOgreResource.h"
-#include "CritterOgreResourceProtocol.h"
-#include "CritterParticleRenderable.h"
-#include "CritterRenderable.h"
-#include "CritterRenderSystem.h"
 #include "CritterStable.h"
-#include "CritterTerrainDescription.h"
-#include "CritterVersion.h"
+
+#if NxOgreHasCharacterController == 1
+
+#include "CritterCommon.h"
+#include "CritterCharacterInput.h"
 
                                                                                        
 
+namespace Critter
+{
+
+/*! class. Body
+*/
+class CritterPublicClass CharacterBase : protected NxOgre::CharacterController, protected NxOgre::TimeListener, protected NxOgre::Callback
+{
+ 
+ public:
+ 
+  
+  friend class RenderSystem;
+  
+  NXOGRE_GC_FRIEND_NEW4
+  NXOGRE_GC_FRIEND_DELETE
+  
+ public:
+   
+   void setInput(const CharacterInput&);
+   
+   void setInput(const CharacterInputHelper&);
+
+   CharacterInput getInput() const;
+
+ protected:
+  
+  CharacterBase(Node*, RenderSystem*);
+  
+  virtual ~CharacterBase();
+  
+  virtual void advancePhysics(float deltaTime, const NxOgre::Enums::Priority&);
+  
+  virtual void advanceAnimation(float deltaTime, const NxOgre::Enums::Priority&);
+  
+  virtual Enums::CharacterType getType() const;
+
+ protected:
+  
+  bool advance(float deltaTime, const NxOgre::Enums::Priority&, const NxOgre::Enums::SceneFunction&);
+  
+  RenderSystem*            mRenderSystem;
+  Critter::Node*           mNode;
+  NxOgre::Enums::Priority  mPriority;
+  Ogre::Radian             mYaw;
+  NxOgre::SimpleCapsule    mShape, mAlternateShape;
+  bool                     mIsUsingAlternateShape;
+  CharacterInput           mInput;
+  
+};
+
+} // namespace
+
+                                                                                       
+
+#endif
 #endif

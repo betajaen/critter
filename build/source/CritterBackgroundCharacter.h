@@ -26,33 +26,70 @@
 
                                                                                        
 
-#ifndef CRITTER_H
-#define CRITTER_H
-                                                                                      
+#ifndef CRITTER_BACKGROUND_CHARACTER_H
+#define CRITTER_BACKGROUND_CHARACTER_H
 
-#include "CritterAnimationState.h"
-#include "CritterAutoConfiguration.h"
-#include "CritterBackgroundCharacter.h"
-#include "CritterBackgroundCharacterDescription.h"
-#include "CritterBody.h"
-#include "CritterBodyDescription.h"
-#include "CritterCharacterBase.h"
-#include "CritterCharacterInput.h"
-#include "CritterCommon.h"
-#include "CritterConfiguration.h"
-#include "CritterEnums.h"
-#include "CritterKinematicBody.h"
-#include "CritterMeshFunctions.h"
-#include "CritterNode.h"
-#include "CritterOgreResource.h"
-#include "CritterOgreResourceProtocol.h"
-#include "CritterParticleRenderable.h"
-#include "CritterRenderable.h"
-#include "CritterRenderSystem.h"
 #include "CritterStable.h"
-#include "CritterTerrainDescription.h"
-#include "CritterVersion.h"
+
+#if NxOgreHasCharacterController == 1
+
+#include "CritterCommon.h"
+#include "CritterCharacterBase.h"
 
                                                                                        
 
+namespace Critter
+{
+
+/*! class. BackgroundCharacter
+*/
+class CritterPublicClass BackgroundCharacter : public CharacterBase
+{
+ 
+ public:
+ 
+  
+  friend class RenderSystem;
+  
+  NXOGRE_GC_FRIEND_NEW5
+  NXOGRE_GC_FRIEND_DELETE
+  
+ public:
+   
+   void setPosition(const Ogre::Vector3& position);
+   
+   void setPosition(const NxOgre::Vec3& position);
+   
+   void setPosition(Ogre::Real x, Ogre::Real y, Ogre::Real z);
+
+
+ protected:
+   
+   /** \internal. Use RenderSystem::createBackgroundCharacter
+   */
+   BackgroundCharacter(const BackgroundCharacterDescription&, const NxOgre::Vec3& position, Ogre::Real yaw, Node*, RenderSystem*);
+   
+   /** \internal. Use RenderSystem::destroyBackgroundCharacter
+   */
+  ~BackgroundCharacter();
+   
+   void advancePhysics(float deltaTime, const NxOgre::Enums::Priority&);
+   
+ protected:
+   
+   Ogre::Real  mJumpVelocity0, mJumpTime, mFallTime;
+   bool        mIsJumping, mIsFalling;
+   bool        mUsesGravity;
+   Ogre::Real  mMaxGroundSpeed;
+   bool        mAnimWait;
+   size_t      mAnimWaitNextAnims[2];
+   NxOgre::Ray mRay;
+   
+};
+
+} // namespace
+
+                                                                                       
+
+#endif
 #endif

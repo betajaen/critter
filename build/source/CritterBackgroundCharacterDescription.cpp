@@ -24,34 +24,52 @@
     
 */
 
+#include "CritterStable.h"
+
+#if NxOgreHasCharacterController == 1
+
+#include "CritterBackgroundCharacterDescription.h"
+
                                                                                        
 
-#ifndef CRITTER_H
-#define CRITTER_H
-                                                                                      
+namespace Critter
+{
 
-#include "CritterAnimationState.h"
-#include "CritterAutoConfiguration.h"
-#include "CritterBackgroundCharacter.h"
-#include "CritterBackgroundCharacterDescription.h"
-#include "CritterBody.h"
-#include "CritterBodyDescription.h"
-#include "CritterCharacterBase.h"
-#include "CritterCharacterInput.h"
-#include "CritterCommon.h"
-#include "CritterConfiguration.h"
-#include "CritterEnums.h"
-#include "CritterKinematicBody.h"
-#include "CritterMeshFunctions.h"
-#include "CritterNode.h"
-#include "CritterOgreResource.h"
-#include "CritterOgreResourceProtocol.h"
-#include "CritterParticleRenderable.h"
-#include "CritterRenderable.h"
-#include "CritterRenderSystem.h"
-#include "CritterStable.h"
-#include "CritterTerrainDescription.h"
-#include "CritterVersion.h"
+                                                                                       
+
+BackgroundCharacterDescription::BackgroundCharacterDescription()
+{
+ reset();
+}
+
+BackgroundCharacterDescription::~BackgroundCharacterDescription()
+{
+ // Nothing to do in here.
+}
+
+void BackgroundCharacterDescription::reset()
+{
+ mPriority = NxOgre::Enums::Priority_Medium;
+ mShape = NxOgre::SimpleCapsule(2.0f,0.5f);
+ mAlternateShape = NxOgre::SimpleCapsule(1.0f,0.5f);
+ mIsUsingAlternateShape = false;
+ mCollisionMask = 0;
+ mStepOffset = 0.25f;
+ mSlopeLimit = 0.707f;
+ mMaxGroundSpeed = 4.0f;
+}
+
+bool BackgroundCharacterDescription::valid()
+{
+ 
+ // If we reached here then everything is okay.
+ return true;
+ 
+}
+
+                                                                                       
+
+}
 
                                                                                        
 

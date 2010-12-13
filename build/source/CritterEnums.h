@@ -80,8 +80,9 @@ enum StockAnimationID
  StockAnimationID_Right,
  StockAnimationID_Up,
  StockAnimationID_Down,
- StockAnimationID_Land,
+ StockAnimationID_Jump,
  StockAnimationID_Fall,
+ StockAnimationID_Land,
  StockAnimationID_Fire
 };
 
@@ -92,6 +93,17 @@ enum AnimationStatus
  AnimationStatus_FadeIn = 2,
  AnimationStatus_Enabled = 3
 };
+
+#if NxOgreHasCharacterController == 1
+
+enum CharacterType
+{
+ CharacterType_Base,
+ CharacterType_Custom,
+ CharacterType_BackgroundCharacter
+};
+
+#endif
 
                                                                                        
 
