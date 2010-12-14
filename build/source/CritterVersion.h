@@ -33,7 +33,7 @@
 #define CritterVersionMinor 7
 #define CritterVersionBuild 1140
 #define CritterBranchName "BuggySwires"
-#define CritterBuildName "Melody"
+#define CritterBuildName "Pieless"
 #define CritterVersion 170
 //~~ mtime d691b4d4cf25cfac2758dc850ecf65a1
 
