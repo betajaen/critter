@@ -57,10 +57,13 @@ BackgroundCharacter::BackgroundCharacter(const BackgroundCharacterDescription& d
  mActiveGroups = desc.mCollisionMask;
  mIsJumping = false;
  mJumpTime = 0;
- mJumpVelocity0 = 0;
+ mMaxJumpVelocity = desc.mJumpVelocity;
+ mJumpVelocity0.zero();
+ mJumpDirectionIndex = 0;
  mUsesGravity = true;
  mMaxGroundSpeed = desc.mMaxGroundSpeed;
  mIsFalling = false;
+ mFallDirectionIndex = 0;
  mAnimWait = false;
  mAnimWaitNextAnims[0] = Enums::NO_ANIMATION;
  mAnimWaitNextAnims[1] = Enums::NO_ANIMATION;
@@ -95,11 +98,12 @@ void BackgroundCharacter::advancePhysics(float deltaTime, const NxOgre::Enums::P
 {
  
  bool hasUserMovement = mInput.left_right != 0 || mInput.forward_backward != 0;
+ bool hasUserJumpMovement = mInput.up == 1;
  
  NxOgre::Vec3 displacement;
  
  // Check for falling.
- if ( (!hasCollidedDown() && !hasPreviouslyCollidedDown()) && mUsesGravity)
+ if ( (!hasCollidedDown() && !hasPreviouslyCollidedDown()) && mUsesGravity && !mIsJumping)
  {
   if (mIsFalling == false)
   {
@@ -114,6 +118,7 @@ void BackgroundCharacter::advancePhysics(float deltaTime, const NxOgre::Enums::P
    mFallTime += deltaTime;
    // V = gt
    displacement = mScene->getGravity() * mFallTime;
+   displacement += mAirUserDirection;
    move(displacement * deltaTime);
   }
   return;
@@ -142,15 +147,58 @@ void BackgroundCharacter::advancePhysics(float deltaTime, const NxOgre::Enums::P
   mIsFalling = false;
   mNode->setAnimation(0, Enums::StockAnimationID_Land);
   mNode->setAnimation(1, Enums::StockAnimationID_Land);
+  mAirUserDirection.zero();
   mAnimWait = true;
   mAnimWaitNextAnims[0] = Enums::StockAnimationID_Idle;
   mAnimWaitNextAnims[1] = Enums::StockAnimationID_Idle;
+
  }
  
  // Fall if gravity is enabled.
  if (mUsesGravity)
   displacement += mScene->getGravity();
  
+ if (mIsJumping)
+ {
+  mJumpTime += deltaTime;
+  
+  // v = v0 - gt
+  displacement = mJumpVelocity0 - (-mScene->getGravity()) * mJumpTime;
+  
+  // if v <= 0 then now is falling, mIsJumping is false.
+  if (displacement[mJumpDirectionIndex] <= 0.0f)
+  {
+   mIsJumping = false;
+   mIsFalling = true;
+   mFallTime = 0;
+   if (mNode->getCurrentAnimation(0) != Enums::StockAnimationID_Fall)
+    mNode->setAnimation(0, Enums::StockAnimationID_Fall);
+   if (mNode->getCurrentAnimation(1) != Enums::StockAnimationID_Fall)
+    mNode->setAnimation(1, Enums::StockAnimationID_Fall);
+   return;
+  }
+  
+  displacement += mAirUserDirection;
+  
+  move(displacement * deltaTime);
+  return;
+ }
+ else if (hasUserJumpMovement && mIsJumping == false)
+ {
+  mNode->setAnimation(0, Enums::StockAnimationID_Jump);
+  mNode->setAnimation(1, Enums::StockAnimationID_Jump);
+  mAnimWait = true;
+  mAnimWaitNextAnims[0] = Enums::StockAnimationID_Fall;
+  mAnimWaitNextAnims[1] = Enums::StockAnimationID_Fall;
+  mIsJumping = true;
+  mJumpTime = 0;
+  mJumpVelocity0 = mScene->getGravity().used() * mMaxJumpVelocity;
+  mJumpDirectionIndex = mJumpVelocity0.axis();
+  mAirUserDirection.x = float(mInput.left_right) * Constants::ReciprocalOf127 * mMaxGroundSpeed;
+  mAirUserDirection.z = float(mInput.forward_backward) * Constants::ReciprocalOf127 * mMaxGroundSpeed;
+  return;
+ }
+
  // Switch to idle pose if no user movement has been requested and forward animation is playing.
  if (hasUserMovement == false)
  {
@@ -171,6 +219,7 @@ void BackgroundCharacter::advancePhysics(float deltaTime, const NxOgre::Enums::P
   displacement.x = float(mInput.left_right) * Constants::ReciprocalOf127 * mMaxGroundSpeed;
   // dS_z = v * 127^-1 * v_max
   displacement.z = float(mInput.forward_backward) * Constants::ReciprocalOf127 * mMaxGroundSpeed;
+  
  }
  
  // sS = S * dT

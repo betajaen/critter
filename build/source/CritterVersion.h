@@ -31,10 +31,10 @@
 
 #define CritterVersionMajor 1
 #define CritterVersionMinor 7
-#define CritterVersionBuild 1140
+#define CritterVersionBuild 1166
 #define CritterBranchName "BuggySwires"
-#define CritterBuildName "Pieless"
+#define CritterBuildName "Tearing"
 #define CritterVersion 170
-//~~ mtime d691b4d4cf25cfac2758dc850ecf65a1
+//~~ mtime e2e085e5bf9bba3f6c4f0de846dc7dc3
 
 #endif

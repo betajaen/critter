@@ -117,6 +117,28 @@ class CritterPublicClass BackgroundCharacterDescription
   */
   Ogre::Real mMaxGroundSpeed;
   
+  /*! variable. mJumpVelocity
+      desc.
+          Initial velocity of the character when jumping.
+      default.
+          4.425 m/s (about 1m peak height, and about 0.9 seconds of flight time).
+  */
+  Ogre::Real mJumpVelocity;
+  
+  void  setJumpVelocityFromMaxHeight(NxOgre::Real gravity, NxOgre::Real maxHeight)
+  {
+   // sqrt(h*g/2) * 2
+   mJumpVelocity = NxOgre::Math::sqrt( (NxOgre::Math::abs(maxHeight) * NxOgre::Math::abs(gravity)) * 0.5f) * 2.0f;
+   std::cout << " --> Result = " << mJumpVelocity << "\n";
+  }
+  
+  void  setJumpVelocityFromMaxTime(NxOgre::Real gravity, NxOgre::Real maxTime)
+  {
+   // h = 1/2 gt^2
+   NxOgre::Real h = 0.5f * NxOgre::Math::abs(gravity) * (maxTime * maxTime);
+   // v = (h*sqrt(g/2h))*2
+   mJumpVelocity = ( h * NxOgre::Math::sqrt( NxOgre::Math::abs(gravity) / (2 * h) ) ) * 2;
+  }
 };
 
 } // namespace Critter

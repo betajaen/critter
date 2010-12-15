@@ -57,6 +57,7 @@ void BackgroundCharacterDescription::reset()
  mStepOffset = 0.25f;
  mSlopeLimit = 0.707f;
  mMaxGroundSpeed = 4.0f;
+ mJumpVelocity = 4.425f;
 }
 
 bool BackgroundCharacterDescription::valid()

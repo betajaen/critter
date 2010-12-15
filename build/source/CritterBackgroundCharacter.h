@@ -77,14 +77,16 @@ class CritterPublicClass BackgroundCharacter : public CharacterBase
    
  protected:
    
-   Ogre::Real  mJumpVelocity0, mJumpTime, mFallTime;
-   bool        mIsJumping, mIsFalling;
-   bool        mUsesGravity;
-   Ogre::Real  mMaxGroundSpeed;
-   bool        mAnimWait;
-   size_t      mAnimWaitNextAnims[2];
-   NxOgre::Ray mRay;
-   
+   Ogre::Real     mMaxJumpVelocity, mJumpTime, mFallTime;
+   NxOgre::Vec3   mAirUserDirection, mJumpVelocity0;
+   size_t         mJumpDirectionIndex;
+   bool           mIsJumping, mIsFalling;
+   size_t         mFallDirectionIndex;
+   bool           mUsesGravity;
+   Ogre::Real     mMaxGroundSpeed;
+   bool           mAnimWait;
+   size_t         mAnimWaitNextAnims[2];
+   NxOgre::Ray    mRay;
 };
 
 } // namespace
