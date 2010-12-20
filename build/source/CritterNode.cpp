@@ -180,6 +180,24 @@ void Node::createAndAttachEntity(const Ogre::String& entity_name, const Ogre::St
  _setupAnimations();
 }
 
+void Node::setPose(const NxOgre::Vec3& position, const NxOgre::Quat& orientation)
+{
+ mNode->setPosition(position.as<Ogre::Vector3>());
+ mNode->setOrientation(orientation.as<Ogre::Quaternion>());
+}
+
+void Node::setPose(const Ogre::Matrix4& m)
+{
+ mNode->setPosition(m.getTrans());
+ mNode->setOrientation(m.extractQuaternion());
+}
+
+void Node::setPose(const NxOgre::Matrix44& m)
+{
+ mNode->setPosition(NxOgre::Vec3(m).as<Ogre::Vector3>());
+ mNode->setOrientation(NxOgre::Vec3(m).as<Ogre::Quaternion>());
+}
+
 void Node::setPosition(Ogre::Real x, Ogre::Real y, Ogre::Real z)
 {
  mNode->setPosition(x,y,z);
@@ -189,6 +207,7 @@ void Node::setPosition(const NxOgre::Vec3& position)
 {
  mNode->setPosition(position.as<Ogre::Vector3>());
 }
+
 
 Ogre::Vector3 Node::getPosition() const
 {
@@ -375,7 +394,11 @@ void Node::setScale(const Ogre::Vector3& scale)
 
 void Node::_setupAnimations(size_t switchTo)
 {
+ 
  Ogre::Entity* entity = getEntityAt(0);
+ if (entity->hasSkeleton() == false)
+  return;
+ 
  entity->getSkeleton()->setBlendMode(Ogre::ANIMBLEND_CUMULATIVE);
  Ogre::String meshName = entity->getMesh()->getName();
  
@@ -524,6 +547,14 @@ bool Node::getCurrentAnimationEnded(size_t section) const
   return false;
  return mAnimations[section].at(mCurrentAnimation[section]).mState->hasEnded();
 }
+
+bool Node::getCurrentAnimationLoops(size_t section) const
+{
+ if (mCurrentAnimation[section] == Enums::NO_ANIMATION)
+  return false;
+ return mAnimations[section].at(mCurrentAnimation[section]).mState->getLoop();
+}
+
 
                                                                                        
 

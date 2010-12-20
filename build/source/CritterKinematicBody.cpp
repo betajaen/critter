@@ -101,10 +101,14 @@ Critter::Node* KinematicBody::getNode() const
  return mNode;
 }
 
-bool KinematicBody::advance(float, const NxOgre::Enums::Priority&, const NxOgre::Enums::SceneFunction&)
+bool KinematicBody::advance(float deltaTime, const NxOgre::Enums::Priority&, const NxOgre::Enums::SceneFunction& func)
 {
- mNode->setPosition( getGlobalPosition().as<Ogre::Vector3>() );
- mNode->setOrientation( getGlobalOrientationQuat().as<Ogre::Quaternion>() );
+ if (func == NxOgre::Enums::SceneFunction_Render)
+ {
+  mNode->setPosition( getGlobalPosition() );
+  mNode->setOrientation( getGlobalOrientationQuat() );
+  mNode->updateAnimations(deltaTime);
+ }
  return true;
 }
 

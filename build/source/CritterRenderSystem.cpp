@@ -43,16 +43,9 @@ namespace Critter
 {
 
 RenderSystem::RenderSystem(NxOgre::Scene* scene, Ogre::SceneManager* sceneMgr)
-: mScene(scene), mVisualDebuggerRenderable(0), mVisualDebuggerNode(0), mVisualDebuggerShown(false), mSceneManager(sceneMgr)
+: mScene(scene), mVisualDebuggerRenderable(0), mVisualDebuggerNode(0), mSceneManager(sceneMgr)
 {
  mScene->addRenderListener(this, NxOgre::Enums::Priority_MediumLow);
- 
- 
-#if NxOgreHasCharacterController == 1
- // Disable Group 31 and 31 collisions. (for character controllers and proxies)
- mScene->setGroupCollisionFlag(31, 31, false);
-#endif
- 
 }
 
 RenderSystem::~RenderSystem()
@@ -87,8 +80,7 @@ Body* RenderSystem::createBody(const NxOgre::ShapeDescription& shape, const NxOg
  if (description.mNode == 0)
   description.mNode = NxOgre::GC::safe_new2<Node>(mSceneManager, this, NXOGRE_GC_THIS);
  
- description.mNode->setPosition(NxOgre::Vec3(pose).as<Ogre::Vector3>());
- description.mNode->setOrientation(NxOgre::Quat(pose).as<Ogre::Quaternion>());
+ description.mNode->setPose(pose);
  
  if (meshName.length())
   description.mNode->createAndAttachEntity(meshName);
@@ -107,8 +99,7 @@ Body* RenderSystem::createBody(const NxOgre::ShapeDescriptions& shapes, const Nx
  if (description.mNode == 0)
   description.mNode = NxOgre::GC::safe_new2<Node>(mSceneManager, this, NXOGRE_GC_THIS);
  
- description.mNode->setPosition(NxOgre::Vec3(pose).as<Ogre::Vector3>());
- description.mNode->setOrientation(NxOgre::Quat(pose).as<Ogre::Quaternion>());
+ description.mNode->setPose(pose);
  
  if (meshName.length())
   description.mNode->createAndAttachEntity(meshName);
@@ -125,8 +116,7 @@ Body* RenderSystem::createBody(const NxOgre::ShapeDescription& shape, const NxOg
  if (description.mNode == 0)
   description.mNode = NxOgre::GC::safe_new2<Node>(mSceneManager, this, NXOGRE_GC_THIS);
  
- description.mNode->setPosition(NxOgre::Vec3(pose).as<Ogre::Vector3>());
- description.mNode->setOrientation(NxOgre::Quat(pose).as<Ogre::Quaternion>());
+ description.mNode->setPose(pose);
  
  Body* body = NxOgre::GC::safe_new4<Body>(shape, pose, description, this, NXOGRE_GC_THIS);
  mBodies.insert(body->getNameHash(), body);
@@ -180,9 +170,8 @@ KinematicBody* RenderSystem::createKinematicBody(const NxOgre::ShapeDescription&
  if (description.mNode == 0)
   description.mNode = NxOgre::GC::safe_new2<Node>(mSceneManager, this, NXOGRE_GC_THIS);
  
- description.mNode->setPosition(NxOgre::Vec3(pose).as<Ogre::Vector3>());
- description.mNode->setOrientation(NxOgre::Quat(pose).as<Ogre::Quaternion>());
- 
+ description.mNode->setPose(pose);
+
  if (meshName.length())
   description.mNode->createAndAttachEntity(meshName);
  
@@ -199,8 +188,7 @@ KinematicBody* RenderSystem::createKinematicBody(const NxOgre::ShapeDescriptions
  if (description.mNode == 0)
   description.mNode = NxOgre::GC::safe_new2<Node>(mSceneManager, this, NXOGRE_GC_THIS);
  
- description.mNode->setPosition(NxOgre::Vec3(pose).as<Ogre::Vector3>());
- description.mNode->setOrientation(NxOgre::Quat(pose).as<Ogre::Quaternion>());
+ description.mNode->setPose(pose);
  
  if (meshName.length())
   description.mNode->createAndAttachEntity(meshName);
@@ -221,9 +209,9 @@ void RenderSystem::destroyKinematicBody(KinematicBody* kinematicBody)
  
 }
 
-bool RenderSystem::advance(float, const NxOgre::Enums::Priority&, const NxOgre::Enums::SceneFunction&)
+bool RenderSystem::advance(float, const NxOgre::Enums::Priority&, const NxOgre::Enums::SceneFunction& func)
 {
- if (mVisualDebuggerRenderable && mVisualDebuggerShown)
+ if (mVisualDebuggerRenderable && func == NxOgre::Enums::SceneFunction_Render)
  {
   ::NxOgre::World::getWorld()->getVisualDebugger()->draw();
   mVisualDebuggerNode->needUpdate();
@@ -231,42 +219,50 @@ bool RenderSystem::advance(float, const NxOgre::Enums::Priority&, const NxOgre::
  return true;
 }
 
-void RenderSystem::setVisualisationMode(NxOgre::Enums::VisualDebugger type)
+NxOgre::VisualDebugger* RenderSystem::createVisualDebugger(const NxOgre::VisualDebuggerDescription& desc)
 {
-
- if (Ogre::MaterialManager::getSingletonPtr()->resourceExists("RenderSystem.VisualDebugger") == false)
+ 
+ if (Ogre::MaterialManager::getSingletonPtr()->resourceExists("Critter.VisualDebuggerMaterial") == false)
  {
-  Ogre::MaterialPtr material = Ogre::MaterialManager::getSingletonPtr()->create("RenderSystem.VisualDebugger", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+  Ogre::MaterialPtr material = Ogre::MaterialManager::getSingletonPtr()->create("Critter.VisualDebuggerMaterial", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
   material->getTechnique(0)->getPass(0)->setDepthBias(1);
   material->getTechnique(0)->getPass(0)->setAmbient(1,1,1);
   material->getTechnique(0)->getPass(0)->setSelfIllumination(1,1,1);
   material->getTechnique(0)->getPass(0)->setDiffuse(1,1,1,1);
   material->getTechnique(0)->getPass(0)->setLightingEnabled(false);
  }
-
+ 
  if (mVisualDebuggerRenderable == 0)
  {
-  mVisualDebuggerRenderable = createRenderable(NxOgre::Enums::RenderableType_VisualDebugger, "RenderSystem.VisualDebugger");
+  mVisualDebuggerRenderable = createRenderable(NxOgre::Enums::RenderableType_VisualDebugger, "Critter.VisualDebuggerMaterial");
   ::NxOgre::World::getWorld()->getVisualDebugger()->setRenderable(mVisualDebuggerRenderable);
   mVisualDebuggerRenderable->setCastShadows(false);
-  mVisualDebuggerNode = mSceneManager->getRootSceneNode()->createChildSceneNode();
+  mVisualDebuggerNode = mSceneManager->getRootSceneNode()->createChildSceneNode("Critter.VisualDebuggerNode");
   mVisualDebuggerNode->attachObject(mVisualDebuggerRenderable);
  }
  
- ::NxOgre::World::getWorld()->getVisualDebugger()->setVisualisationMode(type);
- 
- if (type == NxOgre::Enums::VisualDebugger_ShowNone)
-  mVisualDebuggerNode->setVisible(false);
- else
-  mVisualDebuggerNode->setVisible(true);
- 
- mVisualDebuggerShown = (type != NxOgre::Enums::VisualDebugger_ShowNone);
- 
+ mVisualDebuggerNode->setVisible(true);
+ NxOgre::VisualDebugger* vdebugger = NxOgre::World::getWorld()->getVisualDebugger();
+ vdebugger->loadFromDescription(desc);
+ vdebugger->enable();
+ return vdebugger;
+}
+
+void RenderSystem::destroyVisualDebugger()
+{
+ if (mVisualDebuggerRenderable == 0)
+  return;
+
+ NxOgre::World::getWorld()->getVisualDebugger()->disable();
+ mVisualDebuggerNode->detachAllObjects();
+ destroyRenderable(mVisualDebuggerRenderable);
+ mVisualDebuggerRenderable = 0;
+ mSceneManager->getRootSceneNode()->removeAndDestroyChild(mVisualDebuggerNode->getName());
 }
 
 bool RenderSystem::hasDebugVisualisation() const
 {
- return mVisualDebuggerRenderable && mVisualDebuggerShown;
+ return mVisualDebuggerRenderable != 0;
 }
 
 Ogre::SceneManager* RenderSystem::getSceneManager()

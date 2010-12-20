@@ -163,8 +163,12 @@ class CritterPublicClass RenderSystem : public NxOgre::UserBigClassAllocatable, 
    
    /** \brief Helper function for Debug Visualisation.
    */
-   void setVisualisationMode(NxOgre::Enums::VisualDebugger);
-
+   NxOgre::VisualDebugger* createVisualDebugger(const NxOgre::VisualDebuggerDescription& = NxOgre::VisualDebuggerDescription());
+   
+   /** \brief Helper function for Debug Visualisation.
+   */
+   void destroyVisualDebugger();
+   
    /** \brief Is the Visual Debuggger active?
    */
    bool hasDebugVisualisation() const;
@@ -240,8 +244,6 @@ class CritterPublicClass RenderSystem : public NxOgre::UserBigClassAllocatable, 
      Renderable* mVisualDebuggerRenderable;
      
      Ogre::SceneNode* mVisualDebuggerNode;
-     
-     bool mVisualDebuggerShown;
      
      static unsigned int mUniqueIdentifier;
      

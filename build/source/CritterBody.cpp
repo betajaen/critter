@@ -104,11 +104,14 @@ Node* Body::getNode() const
  return mNode;
 }
 
-bool Body::advance(float deltaTime, const NxOgre::Enums::Priority&, const NxOgre::Enums::SceneFunction&)
+bool Body::advance(float deltaTime, const NxOgre::Enums::Priority&, const NxOgre::Enums::SceneFunction& func)
 {
- mNode->setPosition( getGlobalPosition() );
- mNode->setOrientation( getGlobalOrientationQuat() );
- mNode->updateAnimations(deltaTime);
+ if (func == NxOgre::Enums::SceneFunction_Render)
+ {
+  mNode->setPosition( getGlobalPosition() );
+  mNode->setOrientation( getGlobalOrientationQuat() );
+  mNode->updateAnimations(deltaTime);
+ }
  return true;
 }
 

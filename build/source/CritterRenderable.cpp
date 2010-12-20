@@ -118,7 +118,6 @@ void Renderable::_writeTextureCoords(NxOgre::MeshRenderable* renderable)
 {
  if (renderable->texture_coordinates.capacity())
  {
-  //std::cout << "Texture Coords: " << renderable->texture_coordinates.capacity() << "\n";
   mTextureCoordsBuffer->writeData(
    0,
    renderable->texture_coordinates.capacity() * sizeof(float),
@@ -366,8 +365,6 @@ void Renderable::_resize(size_t vertexCount, size_t indexCount)
         mVertexBufferCapacity,
         Ogre::HardwareBuffer::HBU_DYNAMIC_WRITE_ONLY); // TODO: Custom HBU_?
     
-    std::cout << "Verts: " << mVertexBufferCapacity << "/" << vertexCount << std::endl;
-    
     // Bind buffer
     mRenderOp.vertexData->vertexBufferBinding->setBinding(VertexDeclaration_Position, mVertexBuffer);
     
@@ -447,11 +444,6 @@ void Renderable::_resize(size_t vertexCount, size_t indexCount)
           Ogre::HardwareIndexBuffer::IT_32BIT, //Ogre::HardwareIndexBuffer::IndexType(!mProfile.uses16BitIndexes),
           mIndexBufferCapacity,
           Ogre::HardwareBuffer::HBU_DYNAMIC_WRITE_ONLY); // TODO: Custom HBU_?
- 
-// DEBUG
-     std::cout << "Tris: " << mIndexBufferCapacity << "/" << indexCount << std::endl;
-// END
- 
     }
     
     // Update index count in the render operation

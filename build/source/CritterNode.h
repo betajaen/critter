@@ -69,12 +69,18 @@ class CritterPublicClass Node : public NxOgre::UserExtendedClassAllocatable
 
     Ogre::SceneNode* createChildSceneNode();
     
+    void setPose(const Ogre::Matrix4&);
+
+    void setPose(const NxOgre::Matrix44&);
+    
+    void setPose(const NxOgre::Vec3& position, const NxOgre::Quat& orientation);
+    
     void setPosition(Ogre::Real x, Ogre::Real y, Ogre::Real z);
 
     void setPosition(const Ogre::Vector3& position);
     
     void setPosition(const NxOgre::Vec3& position);
-
+    
     Ogre::Vector3 getPosition() const;
 
     NxOgre::Vec3 getPositionVec3() const;
@@ -188,6 +194,8 @@ class CritterPublicClass Node : public NxOgre::UserExtendedClassAllocatable
     void setCurrentAnimationSpeed(size_t section, Ogre::Real);
     
     bool getCurrentAnimationEnded(size_t section) const;
+    
+    bool getCurrentAnimationLoops(size_t section) const;
 
  protected:
     
