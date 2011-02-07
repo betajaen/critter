@@ -25,11 +25,11 @@
 */
 
 // This is an automatically created file. Do not alter.
-//~~ ub_begin 7b6e6e904ef38caeb582d820cd991686
+//~~ ub_begin e91e6d091e7e980f1e1a7f80a0e79ce5
 
+#include "CritterAnimatedCharacter.cpp"
+#include "CritterAnimatedCharacterDescription.cpp"
 #include "CritterAnimationState.cpp"
-#include "CritterBackgroundCharacter.cpp"
-#include "CritterBackgroundCharacterDescription.cpp"
 #include "CritterBody.cpp"
 #include "CritterBodyDescription.cpp"
 #include "CritterCharacterBase.cpp"

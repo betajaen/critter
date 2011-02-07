@@ -85,7 +85,7 @@ class CritterPublicClass CharacterBase : protected NxOgre::CharacterController, 
   NxOgre::SimpleCapsule    mShape, mAlternateShape;
   bool                     mIsUsingAlternateShape;
   CharacterInput           mInput;
-  
+  NxOgre::Enums::Axis      mUpDirection;
 };
 
 } // namespace

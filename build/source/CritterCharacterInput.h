@@ -42,13 +42,24 @@ namespace Critter
 
 struct CharacterInput
 {
- char forward_backward : 8;
- char left_right : 8;
- unsigned char up : 1;
- unsigned char down : 1;
- unsigned char modifiers : 6;
- unsigned char user : 8;
+ // Amount forward (+127 max), or amount backwards (-127 max), or 0 for no forward/backward motion.
+ // -127/127 is the maximum walk speed per timestep.
+ char forward_backward       : 8;  // 8
+ // Amount left (-127 max), or amount right (+127 max), or 0 for no left/right motion.
+ // If is turning then -127/127 is the maximum turning angle.
+ // If is sidesteping then -127/127 is the maximum walk speed per timestep.
+ char left_right             : 8;  // 16
+ // If set to 1 then left_right turns the character, than 0 which moves the character sideways.
+ unsigned char is_turning    : 1;  // 17
+ // Go "up".
+ unsigned char up            : 1;  // 18
+ // Go "down".
+ unsigned char down          : 1;  // 19
+ // User properties (to use with a mover).
+ unsigned short user         : 13; // 32
 };
+
+NxOgre_CompileAssertion(sizeof(CharacterInput) != 32, Character_Input_Must_Be_32bytes);
 
 struct CharacterInputHelper
 {
@@ -76,6 +87,10 @@ struct CharacterInputHelper
  void up(bool = true);
   
  void down(bool = true);
+
+ void turn(Ogre::Degree difference, Ogre::Degree maxTurningAngle);
+ 
+ void turn(char = 127);
  
  CharacterInput input;
  

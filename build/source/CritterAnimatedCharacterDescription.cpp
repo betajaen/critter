@@ -28,7 +28,7 @@
 
 #if NxOgreHasCharacterController == 1
 
-#include "CritterBackgroundCharacterDescription.h"
+#include "CritterAnimatedCharacterDescription.h"
 
                                                                                        
 
@@ -37,30 +37,31 @@ namespace Critter
 
                                                                                        
 
-BackgroundCharacterDescription::BackgroundCharacterDescription()
+AnimatedCharacterDescription::AnimatedCharacterDescription()
 {
  reset();
 }
 
-BackgroundCharacterDescription::~BackgroundCharacterDescription()
+AnimatedCharacterDescription::~AnimatedCharacterDescription()
 {
  // Nothing to do in here.
 }
 
-void BackgroundCharacterDescription::reset()
+void AnimatedCharacterDescription::reset()
 {
  mPriority = NxOgre::Enums::Priority_Medium;
- mShape = NxOgre::SimpleCapsule(2.0f,0.5f);
- mAlternateShape = NxOgre::SimpleCapsule(1.0f,0.5f);
+ mShape = NxOgre::SimpleCapsule(2.0f, 0.5f);
+ mAlternateShape = NxOgre::SimpleCapsule(1.0f, 0.5f);
  mIsUsingAlternateShape = false;
  mCollisionMask = 0;
  mStepOffset = 0.25f;
  mSlopeLimit = 0.707f;
  mMaxGroundSpeed = 4.0f;
  mJumpVelocity = 4.425f;
+ mUpDirection = NxOgre::Enums::Y;
 }
 
-bool BackgroundCharacterDescription::valid()
+bool AnimatedCharacterDescription::valid()
 {
  
  // If we reached here then everything is okay.

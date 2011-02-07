@@ -64,7 +64,7 @@ RenderSystem::~RenderSystem()
  mRenderables.remove_all();
  
 #if NxOgreHasCharacterController == 1
- mBackgroundCharacters.remove_all();
+ mAnimatedCharacters.remove_all();
 #endif
  
 }
@@ -525,25 +525,25 @@ void RenderSystem::destroyNode(Node* n)
 
 #if NxOgreHasCharacterController == 1
 
-BackgroundCharacter* RenderSystem::createBackgroundCharacter(const Ogre::Vector3& position, const Ogre::Radian& yaw, const Ogre::String& mesh_name, const BackgroundCharacterDescription& desc)
+AnimatedCharacter* RenderSystem::createAnimatedCharacter(const Ogre::Vector3& position, const Ogre::Radian& yaw, const Ogre::String& mesh_name, const AnimatedCharacterDescription& desc)
 {
  Node* node = createNode();
  node->createAndAttachEntity(mesh_name);
- return createBackgroundCharacter(position, yaw, node, desc);
+ return createAnimatedCharacter(position, yaw, node, desc);
 }
 
-BackgroundCharacter* RenderSystem::createBackgroundCharacter(const Ogre::Vector3& position, const Ogre::Radian& yaw, Node* node, const BackgroundCharacterDescription& desc)
+AnimatedCharacter* RenderSystem::createAnimatedCharacter(const Ogre::Vector3& position, const Ogre::Radian& yaw, Node* node, const AnimatedCharacterDescription& desc)
 {
- BackgroundCharacter* character = NxOgre::GC::safe_new5<BackgroundCharacter>(desc, position, yaw.valueRadians(), node, this, NXOGRE_GC_THIS);
- mBackgroundCharacters.push_back(character);
+ AnimatedCharacter* character = NxOgre::GC::safe_new5<AnimatedCharacter>(desc, position, yaw.valueRadians(), node, this, NXOGRE_GC_THIS);
+ mAnimatedCharacters.push_back(character);
  return character;
 }
 
-void RenderSystem::destroyBackgroundCharacter(BackgroundCharacter* character)
+void RenderSystem::destroyAnimatedCharacter(AnimatedCharacter* character)
 {
  if (character == 0)
   return;
- mBackgroundCharacters.remove(mBackgroundCharacters.index(character));
+ mAnimatedCharacters.remove(mAnimatedCharacters.index(character));
 }
 
 #endif

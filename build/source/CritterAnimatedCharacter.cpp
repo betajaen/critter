@@ -28,8 +28,8 @@
 
 #if NxOgreHasCharacterController == 1
 
-#include "CritterBackgroundCharacter.h"
-#include "CritterBackgroundCharacterDescription.h"
+#include "CritterAnimatedCharacter.h"
+#include "CritterAnimatedCharacterDescription.h"
 #include "CritterNode.h"
 
                                                                                        
@@ -39,7 +39,7 @@ namespace Critter
 
                                                                                        
 
-BackgroundCharacter::BackgroundCharacter(const BackgroundCharacterDescription& desc, const NxOgre::Vec3& position, Ogre::Real yaw, Node* node, RenderSystem* renderSys)
+AnimatedCharacter::AnimatedCharacter(const AnimatedCharacterDescription& desc, const NxOgre::Vec3& position, Ogre::Real yaw, Node* node, RenderSystem* renderSys)
 : CharacterBase(node, renderSys)
 {
  
@@ -53,6 +53,7 @@ BackgroundCharacter::BackgroundCharacter(const BackgroundCharacterDescription& d
  c_desc.mCapsuleEasyClimbing = false;
  c_desc.mStepOffset = desc.mStepOffset;
  c_desc.mSlopeLimit = desc.mSlopeLimit;
+ c_desc.mUpDirection = desc.mUpDirection;
  
  mActiveGroups = desc.mCollisionMask;
  mIsJumping = false;
@@ -75,27 +76,84 @@ BackgroundCharacter::BackgroundCharacter(const BackgroundCharacterDescription& d
  mRay.mDirection.y = -1;
 }
 
-BackgroundCharacter::~BackgroundCharacter()
+AnimatedCharacter::~AnimatedCharacter()
 {
 }
 
-void BackgroundCharacter::setPosition(const Ogre::Vector3& position)
-{
- CharacterController::setPosition(position);
-}
-
-void BackgroundCharacter::setPosition(const NxOgre::Vec3& position)
+void AnimatedCharacter::setPosition(const Ogre::Vector3& position)
 {
  CharacterController::setPosition(position);
 }
 
-void BackgroundCharacter::setPosition(Ogre::Real x, Ogre::Real y, Ogre::Real z)
+void AnimatedCharacter::setPosition(const NxOgre::Vec3& position)
+{
+ CharacterController::setPosition(position);
+}
+
+void AnimatedCharacter::setPosition(Ogre::Real x, Ogre::Real y, Ogre::Real z)
 {
  CharacterController::setPosition(NxOgre::Vec3(x,y,z));
 }
 
-void BackgroundCharacter::advancePhysics(float deltaTime, const NxOgre::Enums::Priority&)
+Ogre::Vector3 AnimatedCharacter::getPosition() const
 {
+ return CharacterController::getPosition().as<Ogre::Vector3>();
+}
+
+NxOgre::Vec3 AnimatedCharacter::getPositionAsVec3() const
+{
+ return CharacterController::getPosition();
+}
+
+void AnimatedCharacter::playAnimation(size_t section0, size_t section1, size_t recoveryAnim0, size_t recoveryAnim1, bool freezeMovementWhenPlaying)
+{
+ 
+ mAnimWait = freezeMovementWhenPlaying;
+ 
+ if (section0 != Enums::NO_ANIMATION)
+ {
+  if (section0 != mNode->getCurrentAnimation(0))
+  {
+   mNode->setAnimation(0, section0, true);
+   mAnimWaitNextAnims[0] = recoveryAnim0;
+  }
+ }
+ 
+ if (section1 != Enums::NO_ANIMATION)
+ {
+  if (section0 != mNode->getCurrentAnimation(1))
+  {
+   mNode->setAnimation(1, section1, true);
+   mAnimWaitNextAnims[1] = recoveryAnim1;
+  }
+ }
+ 
+}
+
+void AnimatedCharacter::advancePhysics(float deltaTime, const NxOgre::Enums::Priority&)
+{
+ 
+ // Wait for any animation to finish, then switch to a new one.
+ if (mAnimWait)
+ {
+  if (mNode->getCurrentAnimation(0) != Enums::NO_ANIMATION)
+  {
+    if (mNode->getCurrentAnimationEnded(0) == false && mNode->getCurrentAnimationLoops(0) == false)
+    {
+     return;
+    }
+  }
+  if (mNode->getCurrentAnimation(1) != Enums::NO_ANIMATION)
+  {
+    if (mNode->getCurrentAnimationEnded(1) == false && mNode->getCurrentAnimationLoops(1) == false)
+    {
+     return;
+    }
+  }
+  mAnimWait = false;
+  mNode->setAnimation(0, mAnimWaitNextAnims[0]);
+  mNode->setAnimation(1, mAnimWaitNextAnims[1]);
+ }
  
  bool hasUserMovement = mInput.left_right != 0 || mInput.forward_backward != 0;
  bool hasUserJumpMovement = mInput.up == 1;
@@ -109,8 +167,7 @@ void BackgroundCharacter::advancePhysics(float deltaTime, const NxOgre::Enums::P
   {
    mIsFalling = true;
    mFallTime = 0;
-   mNode->setAnimation(0, Enums::StockAnimationID_Fall);
-   mNode->setAnimation(1, Enums::StockAnimationID_Fall);
+   playAnimation(Enums::StockAnimationID_Fall, Enums::StockAnimationID_Fall);
    // V = gt = 0
   }
   else
@@ -124,34 +181,12 @@ void BackgroundCharacter::advancePhysics(float deltaTime, const NxOgre::Enums::P
   return;
  }
  
- // Wait for any animation to finish, then switch to a new one.
- if (mAnimWait)
- {
-  if (mNode->getCurrentAnimation(0) != Enums::NO_ANIMATION)
-    if (mNode->getCurrentAnimationEnded(0) == false)
-    {
-     return;
-    }
-  if (mNode->getCurrentAnimation(1) != Enums::NO_ANIMATION)
-    if (mNode->getCurrentAnimationEnded(1) == false)
-    {
-     return;
-    }
-  mAnimWait = false;
-  mNode->setAnimation(0, mAnimWaitNextAnims[0]);
-  mNode->setAnimation(1, mAnimWaitNextAnims[1]);
- }
-
  if (mIsFalling)
  {
   mIsFalling = false;
-  mNode->setAnimation(0, Enums::StockAnimationID_Land);
-  mNode->setAnimation(1, Enums::StockAnimationID_Land);
   mAirUserDirection.zero();
-  mAnimWait = true;
-  mAnimWaitNextAnims[0] = Enums::StockAnimationID_Idle;
-  mAnimWaitNextAnims[1] = Enums::StockAnimationID_Idle;
-
+  playAnimation(Enums::StockAnimationID_Land, Enums::StockAnimationID_Land, Enums::StockAnimationID_Idle,Enums::StockAnimationID_Idle, true);
+  return;
  }
  
  // Fall if gravity is enabled.
@@ -171,10 +206,7 @@ void BackgroundCharacter::advancePhysics(float deltaTime, const NxOgre::Enums::P
    mIsJumping = false;
    mIsFalling = true;
    mFallTime = 0;
-   if (mNode->getCurrentAnimation(0) != Enums::StockAnimationID_Fall)
-    mNode->setAnimation(0, Enums::StockAnimationID_Fall);
-   if (mNode->getCurrentAnimation(1) != Enums::StockAnimationID_Fall)
-    mNode->setAnimation(1, Enums::StockAnimationID_Fall);
+   playAnimation(Enums::StockAnimationID_Fall, Enums::StockAnimationID_Fall);
    return;
   }
   
@@ -185,45 +217,56 @@ void BackgroundCharacter::advancePhysics(float deltaTime, const NxOgre::Enums::P
  }
  else if (hasUserJumpMovement && mIsJumping == false)
  {
-  mNode->setAnimation(0, Enums::StockAnimationID_Jump);
-  mNode->setAnimation(1, Enums::StockAnimationID_Jump);
-  mAnimWait = true;
-  mAnimWaitNextAnims[0] = Enums::StockAnimationID_Fall;
-  mAnimWaitNextAnims[1] = Enums::StockAnimationID_Fall;
   mIsJumping = true;
   mJumpTime = 0;
   mJumpVelocity0 = mScene->getGravity().used() * mMaxJumpVelocity;
   mJumpDirectionIndex = mJumpVelocity0.axis();
-  mAirUserDirection.x = float(mInput.left_right) * Constants::ReciprocalOf127 * mMaxGroundSpeed;
-  mAirUserDirection.z = float(mInput.forward_backward) * Constants::ReciprocalOf127 * mMaxGroundSpeed;
+  mAirUserDirection.x = float(mInput.left_right) * ReciprocalOf127 * mMaxGroundSpeed;
+  mAirUserDirection.z = float(mInput.forward_backward) * ReciprocalOf127 * mMaxGroundSpeed;
+  playAnimation(Enums::StockAnimationID_Jump, Enums::StockAnimationID_Jump, Enums::StockAnimationID_Fall, Enums::StockAnimationID_Fall);
   return;
  }
 
  // Switch to idle pose if no user movement has been requested and forward animation is playing.
  if (hasUserMovement == false)
  {
-  if (mNode->getCurrentAnimation(0) == Enums::StockAnimationID_Forward)
-   mNode->setAnimation(0, Enums::StockAnimationID_Idle);
-  if (mNode->getCurrentAnimation(1) == Enums::StockAnimationID_Forward)
-   mNode->setAnimation(1, Enums::StockAnimationID_Idle);
+  playAnimation(Enums::StockAnimationID_Idle, Enums::StockAnimationID_Idle);
  }
  // Switch to forward pose (if idle), calculate new displacement vector from user movement.
  else
  {
-  if (mNode->getCurrentAnimation(0) == Enums::StockAnimationID_Idle)
-   mNode->setAnimation(0, Enums::StockAnimationID_Forward);
-  if (mNode->getCurrentAnimation(1) == Enums::StockAnimationID_Idle)
-   mNode->setAnimation(1, Enums::StockAnimationID_Forward);
+  playAnimation(Enums::StockAnimationID_Forward, Enums::StockAnimationID_Forward);
   
-  // dS_x = v * 127^-1 * v_max
-  displacement.x = float(mInput.left_right) * Constants::ReciprocalOf127 * mMaxGroundSpeed;
+  static  Ogre::Vector3 userDirection;
+  userDirection = Ogre::Vector3::ZERO;
+  
+  if (mInput.is_turning && mInput.left_right != 0)
+  {
+   // y += v * 0.013 * dt
+   mYaw += Ogre::Radian(float(mInput.left_right) * 0.013 * deltaTime); // temp.
+   userDirection.x = 0;
+  }
+  else if (mInput.is_turning == false)
+  {
+   // dS_x = v * 127^-1 * v_max
+   userDirection.x = float(mInput.left_right) * ReciprocalOf127 * mMaxGroundSpeed;
+  }
+  
   // dS_z = v * 127^-1 * v_max
-  displacement.z = float(mInput.forward_backward) * Constants::ReciprocalOf127 * mMaxGroundSpeed;
+  userDirection.z = float(mInput.forward_backward) * ReciprocalOf127 * mMaxGroundSpeed;
+    
+  userDirection = Ogre::Quaternion(mYaw, Ogre::Vector3::UNIT_Y) * userDirection;
+
   
+  displacement.x += userDirection.x;
+  displacement.z += userDirection.z;
+
  }
+ 
  
  // sS = S * dT
  move(displacement * deltaTime);
+ 
  
 }
 

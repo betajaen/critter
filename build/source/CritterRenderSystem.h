@@ -35,8 +35,8 @@
 #include "CritterAnimationState.h"
 
 #if NxOgreHasCharacterController == 1
-#include "CritterBackgroundCharacter.h"
-#include "CritterBackgroundCharacterDescription.h"
+#include "CritterAnimatedCharacter.h"
+#include "CritterAnimatedCharacterDescription.h"
 #endif
 
                                                                                        
@@ -70,9 +70,9 @@ class CritterPublicClass RenderSystem : public NxOgre::UserBigClassAllocatable, 
    typedef NxOgre::hashmap_iterator<AnimationProperties*> MeshAnimationIterator;
    
 #if NxOgreHasCharacterController == 1
-   typedef NxOgre::vector<BackgroundCharacter*, NxOgre::GC::HasGarbageCollection> BackgroundCharacters;
+   typedef NxOgre::vector<AnimatedCharacter*, NxOgre::GC::HasGarbageCollection> AnimatedCharacters;
    
-   typedef NxOgre::vector_iterator<BackgroundCharacter*> BackgroundCharacterIterator;
+   typedef NxOgre::vector_iterator<AnimatedCharacter*> AnimatedCharacterIterator;
 #endif
 
    RenderSystem(NxOgre::Scene*, Ogre::SceneManager* = ::Ogre::Root::getSingletonPtr()->getSceneManagerIterator().getNext());
@@ -217,15 +217,15 @@ class CritterPublicClass RenderSystem : public NxOgre::UserBigClassAllocatable, 
    
    /** \brief Create a Background Character
    */
-   BackgroundCharacter* createBackgroundCharacter(const Ogre::Vector3& position, const Ogre::Radian& yaw, const Ogre::String& mesh_name, const BackgroundCharacterDescription& = BackgroundCharacterDescription());
+   AnimatedCharacter* createAnimatedCharacter(const Ogre::Vector3& position, const Ogre::Radian& yaw, const Ogre::String& mesh_name, const AnimatedCharacterDescription& = AnimatedCharacterDescription());
    
    /** \brief Create a Background Character
    */
-   BackgroundCharacter* createBackgroundCharacter(const Ogre::Vector3& position, const Ogre::Radian& yaw, Node*, const BackgroundCharacterDescription& = BackgroundCharacterDescription());
+   AnimatedCharacter* createAnimatedCharacter(const Ogre::Vector3& position, const Ogre::Radian& yaw, Node*, const AnimatedCharacterDescription& = AnimatedCharacterDescription());
    
    /** \brief Destroy a Background Character
    */
-   void destroyBackgroundCharacter(BackgroundCharacter*);
+   void destroyAnimatedCharacter(AnimatedCharacter*);
    
 #endif
 
@@ -250,7 +250,7 @@ class CritterPublicClass RenderSystem : public NxOgre::UserBigClassAllocatable, 
      MeshAnimations mAnimations[CRITTER_MAX_ANIMATION_SECTIONS];
      
 #if NxOgreHasCharacterController == 1
-     BackgroundCharacters mBackgroundCharacters;
+     AnimatedCharacters mAnimatedCharacters;
 #endif
      
 }; // class RenderSystem

@@ -100,7 +100,7 @@ enum CharacterType
 {
  CharacterType_Base,
  CharacterType_Custom,
- CharacterType_BackgroundCharacter
+ CharacterType_AnimatedCharacter
 };
 
 #endif

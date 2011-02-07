@@ -41,9 +41,9 @@
 namespace Critter
 {
 
-/*! class. BackgroundCharacter
+/*! class. AnimatedCharacter
 */
-class CritterPublicClass BackgroundCharacter : public CharacterBase
+class CritterPublicClass AnimatedCharacter : public CharacterBase
 {
  
  public:
@@ -56,22 +56,31 @@ class CritterPublicClass BackgroundCharacter : public CharacterBase
   
  public:
    
+   /*! function. playAnimation
+       desc.
+           Play an animation for section 0 and 1, and optionally freeze all movement when playing.
+   */
+   void playAnimation(size_t section0, size_t section1, size_t recoveryAnim0 = Critter::Enums::StockAnimationID_Idle, size_t recoveryAnim1 = Critter::Enums::StockAnimationID_Idle, bool freezeMovementWhenPlaying = false);
+   
    void setPosition(const Ogre::Vector3& position);
    
    void setPosition(const NxOgre::Vec3& position);
    
    void setPosition(Ogre::Real x, Ogre::Real y, Ogre::Real z);
-
-
+   
+   Ogre::Vector3 getPosition() const;
+   
+   NxOgre::Vec3 getPositionAsVec3() const;
+   
  protected:
    
-   /** \internal. Use RenderSystem::createBackgroundCharacter
+   /** \internal. Use RenderSystem::createAnimatedCharacter
    */
-   BackgroundCharacter(const BackgroundCharacterDescription&, const NxOgre::Vec3& position, Ogre::Real yaw, Node*, RenderSystem*);
+   AnimatedCharacter(const AnimatedCharacterDescription&, const NxOgre::Vec3& position, Ogre::Real yaw, Node*, RenderSystem*);
    
-   /** \internal. Use RenderSystem::destroyBackgroundCharacter
+   /** \internal. Use RenderSystem::destroyAnimatedCharacter
    */
-  ~BackgroundCharacter();
+  ~AnimatedCharacter();
    
    void advancePhysics(float deltaTime, const NxOgre::Enums::Priority&);
    

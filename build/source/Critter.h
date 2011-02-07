@@ -32,8 +32,8 @@
 
 #include "CritterAnimationState.h"
 #include "CritterAutoConfiguration.h"
-#include "CritterBackgroundCharacter.h"
-#include "CritterBackgroundCharacterDescription.h"
+#include "CritterAnimatedCharacter.h"
+#include "CritterAnimatedCharacterDescription.h"
 #include "CritterBody.h"
 #include "CritterBodyDescription.h"
 #include "CritterCharacterBase.h"

@@ -40,20 +40,20 @@
 namespace Critter
 {
 
-/*! class. BackgroundCharacter
+/*! class. AnimatedCharacter
 */
-class CritterPublicClass BackgroundCharacterDescription
+class CritterPublicClass AnimatedCharacterDescription
 {
   
  public:
   
   /** \brief OGRE3DPrototype constructor
   */
-  BackgroundCharacterDescription();
+  AnimatedCharacterDescription();
   
   /** \brief OGRE3DPrototype destructor
   */
- ~BackgroundCharacterDescription();
+ ~AnimatedCharacterDescription();
   
   /** \brief Reset the RigidBodyPrototype and OGRE3D bits to it's default state.
   */
@@ -99,7 +99,7 @@ class CritterPublicClass BackgroundCharacterDescription
       default.
           0.707 (~40 degrees)
   */
-  Ogre::Real mSlopeLimit;
+  NxOgre::Real mSlopeLimit;
   
   /*! variable. mStepOffset
       desc.
@@ -107,7 +107,7 @@ class CritterPublicClass BackgroundCharacterDescription
       default.
           0.25
   */
-  Ogre::Real mStepOffset;
+  NxOgre::Real mStepOffset;
   
   /*! variable. mMaxGroundSpeed
       desc.
@@ -115,7 +115,7 @@ class CritterPublicClass BackgroundCharacterDescription
       default.
           4.0
   */
-  Ogre::Real mMaxGroundSpeed;
+  NxOgre::Real mMaxGroundSpeed;
   
   /*! variable. mJumpVelocity
       desc.
@@ -123,7 +123,7 @@ class CritterPublicClass BackgroundCharacterDescription
       default.
           4.425 m/s (about 1m peak height, and about 0.9 seconds of flight time).
   */
-  Ogre::Real mJumpVelocity;
+  NxOgre::Real mJumpVelocity;
   
   void  setJumpVelocityFromMaxHeight(NxOgre::Real gravity, NxOgre::Real maxHeight)
   {
@@ -139,6 +139,14 @@ class CritterPublicClass BackgroundCharacterDescription
    // v = (h*sqrt(g/2h))*2
    mJumpVelocity = ( h * NxOgre::Math::sqrt( NxOgre::Math::abs(gravity) / (2 * h) ) ) * 2;
   }
+
+  /*! variable. mUpDirection
+      desc.
+          What is "up" to the character?
+      default.
+          NxOgre::Enums::Y
+  */
+  NxOgre::Enums::Axis mUpDirection;
 };
 
 } // namespace Critter

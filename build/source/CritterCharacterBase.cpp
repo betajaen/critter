@@ -40,7 +40,7 @@ namespace Critter
                                                                                        
 
 CharacterBase::CharacterBase(Node* node, RenderSystem* renderSystem)
-: CharacterController(renderSystem->getScene()), mNode(node), mRenderSystem(renderSystem), mYaw(0)
+: CharacterController(renderSystem->getScene()), mNode(node), mRenderSystem(renderSystem), mYaw(0), mUpDirection(NxOgre::Enums::Y)
 {
  mScene->addSimulateListener(this, mPriority);
  mScene->addRenderListener(this, mPriority);
@@ -76,7 +76,7 @@ void CharacterBase::advancePhysics(float deltaTime, const NxOgre::Enums::Priorit
 void CharacterBase::advanceAnimation(float deltaTime, const NxOgre::Enums::Priority&)
 {
  mNode->setPosition(getPosition());
- mNode->setOrientation(mYaw, NxOgre::Enums::Y);
+ mNode->setOrientation(mYaw, mUpDirection);
  mNode->updateAnimations(deltaTime);
 }
 

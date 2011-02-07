@@ -40,8 +40,8 @@ namespace Critter
 {
  struct Animation;
  struct AnimationState;
- class  BackgroundCharacter;
- class  BackgroundCharacterDescription;
+ class  AnimatedCharacter;
+ class  AnimatedCharacterDescription;
  class  Body;
  class  BodyDescription;
  class  CharacterBase;
@@ -52,10 +52,8 @@ namespace Critter
  class  RenderSystem;
  class  Renderable;
  
- namespace Constants
- {
-  static const float ReciprocalOf127 = 0.00787401575f;
- }
+ static const float ReciprocalOf127 = 0.00787401575f;
+ 
  
 }
 

@@ -48,9 +48,9 @@ void CharacterInputHelper::reset()
 {
  input.forward_backward = 0;
  input.left_right = 0;
+ input.is_turning = 0;
  input.up = 0;
  input.down = 0;
- input.modifiers = 0;
  input.user = 0;
 }
  
