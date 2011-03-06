@@ -104,6 +104,18 @@ void CharacterInputHelper::down(bool val)
  input.down = (val ? 1 : 0);
 }
 
+void CharacterInputHelper::turn(Ogre::Degree difference, Ogre::Degree maxTurningAngle)
+{
+ input.is_turning = true;
+ input.left_right = char(Ogre::Math::Clamp<Ogre::Real>(difference.valueDegrees() / maxTurningAngle.valueDegrees(), -1.0f, 1.0f) * 127.0f);
+}
+
+void CharacterInputHelper::turn(char direction)
+{
+ input.is_turning = true;
+ input.left_right = char(Ogre::Math::Clamp<char>(direction, -127, 127));
+}
+
                                                                                        
 
 }
